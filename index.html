@@ -130,6 +130,144 @@ main{padding:18px;max-width:760px;margin:0 auto}
 .client-phone:hover{background:var(--green-bg);color:var(--green);border-color:transparent}
 .client-phone.wa:hover{background:var(--green);color:#fff}
 
+/* ============================================
+   CAPITAL CARD
+============================================ */
+.capital-card{
+  background:linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  margin-bottom:14px;
+  overflow:hidden;
+  cursor:pointer;
+  transition:border-color .15s, box-shadow .2s;
+}
+.capital-card:hover{border-color:var(--border-2)}
+.capital-card.expanded{box-shadow:var(--shadow)}
+.capital-main{
+  padding:16px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  position:relative;
+}
+.capital-info{flex:1;min-width:0}
+.capital-info .cap-lbl{
+  font-size:10.5px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.capital-info .cap-amt{
+  font-size:28px;
+  font-weight:700;
+  letter-spacing:-.035em;
+  margin-top:5px;
+  color:var(--text);
+  font-variant-numeric:tabular-nums;
+  line-height:1.1;
+}
+.capital-info .cap-sub{
+  font-size:11.5px;
+  color:var(--faint);
+  margin-top:4px;
+  font-weight:500;
+}
+.capital-toggle{
+  width:34px;height:34px;
+  border-radius:10px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  display:grid;place-items:center;
+  color:var(--muted);
+  transition:.25s cubic-bezier(.2,.8,.3,1);
+  flex:0 0 auto;
+}
+.capital-card.expanded .capital-toggle{
+  transform:rotate(180deg);
+  background:var(--accent);
+  color:#fff;
+  border-color:transparent;
+}
+.capital-breakdown{
+  padding:0 18px 16px;
+  border-top:1px solid var(--border);
+  animation:capFade .3s cubic-bezier(.2,.8,.3,1);
+}
+@keyframes capFade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.cap-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 0;
+  border-bottom:1px solid var(--border);
+}
+.cap-row:last-child{border-bottom:none}
+.cap-dot{
+  width:9px;height:9px;
+  border-radius:50%;
+  flex:0 0 auto;
+  box-shadow:0 0 0 3px color-mix(in srgb, currentColor 12%, transparent);
+}
+.cap-dot.green{background:var(--green);color:var(--green)}
+.cap-dot.blue{background:var(--accent);color:var(--accent)}
+.cap-dot.purple{background:var(--purple);color:var(--purple)}
+.cap-name{
+  flex:1;
+  font-size:13.5px;
+  font-weight:500;
+  color:var(--text);
+  min-width:0;
+}
+.cap-name small{
+  display:block;
+  font-size:11px;
+  color:var(--faint);
+  font-weight:400;
+  margin-top:2px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.cap-val{
+  font-size:14.5px;
+  font-weight:700;
+  color:var(--text);
+  font-variant-numeric:tabular-nums;
+  flex:0 0 auto;
+}
+.cap-row.total{
+  padding-top:14px;
+  margin-top:2px;
+  border-top:2px solid var(--border-2);
+  border-bottom:none;
+  align-items:center;
+}
+.cap-row.total .cap-name{
+  font-weight:600;
+  font-size:14px;
+  color:var(--text);
+}
+.cap-row.total .cap-val{
+  font-size:19px;
+  color:var(--accent);
+  letter-spacing:-.02em;
+}
+.cap-hint{
+  font-size:11px;
+  color:var(--faint);
+  margin-top:8px;
+  padding-top:10px;
+  border-top:1px dashed var(--border);
+  text-align:center;
+  line-height:1.5;
+}
+
 .wallet-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
 .wallet-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;position:relative;overflow:hidden;transition:border-color .15s}
 .wallet-card .cur{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
@@ -349,7 +487,9 @@ const ICONS = {
   swapH:'<path d="M4 7h16"/><path d="M8 3 4 7l4 4"/><path d="M20 17H4"/><path d="M16 21l4-4-4-4"/>',
   zap:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
   copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
-  check:'<polyline points="20 6 9 17 4 12"/>'
+  check:'<polyline points="20 6 9 17 4 12"/>',
+  chevronDown:'<polyline points="6 9 12 15 18 9"/>',
+  briefcase:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>'
 };
 function icon(name, size = 20, sw = 1.9){
   return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]||''}</svg>`;
@@ -371,6 +511,7 @@ let currentTab = 'phones';
 let searchQ = '';
 let pendingSale = null;
 let undoStack = [];
+let capitalExpanded = false;   /* ⭐ Estado del desglose de capital */
 
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
@@ -380,9 +521,6 @@ const fNum = n => (parseFloat(n)||0).toLocaleString('en-US', { maximumFractionDi
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate = d => new Date(d).toLocaleDateString('es', { day:'2-digit', month:'short', year:'numeric' });
 
-/* ============================================================
-   FORMATEA TELÉFONO PARA MOSTRAR (formato Venezuela 🇻🇪)
-============================================================ */
 function fmtPhone(p){
   if (!p) return '';
   const digits = String(p).replace(/\D/g,'');
@@ -403,34 +541,17 @@ function fmtPhone(p){
   return digits;
 }
 
-/* ============================================================
-   NORMALIZA TELÉFONO PARA wa.me (formato internacional sin +)
-   - 0412-1234567  → 584121234567
-   - 04121234567   → 584121234567
-   - 4121234567    → 584121234567
-   - +58 412...    → 584121234567
-   - 584121234567  → 584121234567
-   - +57 300...    → 57300... (respeta otros países)
-============================================================ */
 function normalizePhoneForWA(p){
   if (!p) return '';
   let digits = String(p).replace(/\D/g,'');
   if (!digits) return '';
-
-  // Ya tiene código país Venezuela (58...) con 12 dígitos
   if (digits.startsWith('58') && digits.length >= 12) return digits;
-
-  // Formato local con 0: 04121234567 (11 dígitos) → 584121234567
   if (digits.startsWith('0') && digits.length === 11){
     return '58' + digits.slice(1);
   }
-
-  // Formato sin 0: 4121234567 (10 dígitos, empieza con 4) → 584121234567
   if (digits.length === 10 && digits.startsWith('4')){
     return '58' + digits;
   }
-
-  // Otros países: ya viene con código país, devolver tal cual
   return digits;
 }
 
@@ -470,6 +591,38 @@ function calcConvert(from, to, amount){
   }
   return { out, rateLabel, isP2P };
 }
+
+/* ============================================================
+   CAPITAL DEL NEGOCIO
+   - Disponible: suma de todas las cuentas convertidas a USD
+   - Accesorios: costo unitario × stock (lo invertido)
+   - Equipos: suma de costos de cada teléfono en stock
+============================================================ */
+function calculateCapital(){
+  const eqCop = wallet.rate ? (wallet.cop / wallet.rate) : 0;
+  const disponible = wallet.usd + wallet.usdt + wallet.zinli + eqCop;
+
+  const accUnits = acc.reduce((s, a) => s + (+a.qty || 0), 0);
+  const accCost = acc.reduce((s, a) => s + ((+a.cost || 0) * (+a.qty || 0)), 0);
+
+  const phoneCount = phones.length;
+  const phonesCost = phones.reduce((s, p) => s + (+p.cost || 0), 0);
+
+  return {
+    disponible,
+    accCost,
+    accUnits,
+    accTypes: acc.length,
+    phonesCost,
+    phoneCount,
+    total: disponible + accCost + phonesCost
+  };
+}
+
+window.toggleCapital = () => {
+  capitalExpanded = !capitalExpanded;
+  renderWallet();
+};
 
 function applyTheme(){
   document.documentElement.dataset.theme = settings.theme;
@@ -596,7 +749,7 @@ function updateHeaderSub(){
   const map = {
     phones: `${phones.length} equipos en inventario`,
     acc: `${acc.length} tipos de accesorios`,
-    wallet: `Tasa COP ${fMoney(wallet.rate, '$')} · USDT/Zinli ${fNum(wallet.usdtZinli)}`,
+    wallet: `Capital: ${fMoney(calculateCapital().total)}`,
     history: `${hist.length} ventas registradas`,
     settings: 'Preferencias de la aplicación'
   };
@@ -684,15 +837,71 @@ function renderAcc(){
 }
 
 function renderWallet(){
-  const eqCop = wallet.rate ? (wallet.cop / wallet.rate) : 0;
-  const total = wallet.usd + wallet.usdt + wallet.zinli + eqCop;
+  const capital = calculateCapital();
   const recent = movs.slice(-12).reverse();
 
-  $('#dashGrid').innerHTML = `<div class="dash-card wide" style="background:var(--surface-2)">
-    <div class="lbl" style="color:var(--accent)">${icon('wallet',12)} Total disponible (USD)</div>
-    <div class="val acc" style="font-size:26px;margin-top:6px">${fMoney(total)}</div></div>`;
+  /* Dashboard del header — ahora muestra el CAPITAL TOTAL */
+  $('#dashGrid').innerHTML = `<div class="dash-card wide" style="background:linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%)">
+    <div class="lbl" style="color:var(--accent)">${icon('briefcase',12)} Capital total del negocio</div>
+    <div class="val acc" style="font-size:26px;margin-top:6px">${fMoney(capital.total)}</div>
+    <div style="font-size:11px;color:var(--faint);margin-top:3px;font-weight:500">Disponible + Equipos + Accesorios</div>
+  </div>`;
 
   $('#view-wallet').innerHTML = `
+    <!-- ========== TARJETA CAPITAL DESPLEGABLE ========== -->
+    <div class="capital-card ${capitalExpanded ? 'expanded' : ''}" onclick="toggleCapital()">
+      <div class="capital-main">
+        <div class="capital-info">
+          <div class="cap-lbl">${icon('briefcase',11,2.2)} Capital del negocio</div>
+          <div class="cap-amt">${fMoney(capital.total)}</div>
+          <div class="cap-sub">${capitalExpanded ? 'Toca para ocultar el desglose' : 'Toca para ver el desglose completo'}</div>
+        </div>
+        <div class="capital-toggle">${icon('chevronDown',18,2.3)}</div>
+      </div>
+
+      ${capitalExpanded ? `
+        <div class="capital-breakdown">
+          <div class="cap-row">
+            <span class="cap-dot green"></span>
+            <span class="cap-name">
+              Disponible en caja
+              <small>USD, USDT, Zinli y COP (convertidos)</small>
+            </span>
+            <span class="cap-val">${fMoney(capital.disponible)}</span>
+          </div>
+
+          <div class="cap-row">
+            <span class="cap-dot blue"></span>
+            <span class="cap-name">
+              Equipos en stock
+              <small>${capital.phoneCount} ${capital.phoneCount === 1 ? 'equipo' : 'equipos'} · a costo</small>
+            </span>
+            <span class="cap-val">${fMoney(capital.phonesCost)}</span>
+          </div>
+
+          <div class="cap-row">
+            <span class="cap-dot purple"></span>
+            <span class="cap-name">
+              Accesorios
+              <small>${capital.accTypes} ${capital.accTypes === 1 ? 'tipo' : 'tipos'} · ${capital.accUnits} ${capital.accUnits === 1 ? 'unidad' : 'unidades'} · a costo</small>
+            </span>
+            <span class="cap-val">${fMoney(capital.accCost)}</span>
+          </div>
+
+          <div class="cap-row total">
+            <span class="cap-name">Total global</span>
+            <span class="cap-val">${fMoney(capital.total)}</span>
+          </div>
+
+          <div class="cap-hint">
+            El <b>disponible</b> es dinero líquido listo para usar.<br>
+            Los <b>equipos</b> y <b>accesorios</b> representan lo que ya invertiste (a precio de costo).
+          </div>
+        </div>
+      ` : ''}
+    </div>
+
+    <!-- ========== TASAS ========== -->
     <div class="rates-bar">
       <div class="rate-pill" onclick="updateRate()">
         <div class="edit-mini">${icon('edit',12)}</div>
@@ -708,6 +917,7 @@ function renderWallet(){
       </div>
     </div>
 
+    <!-- ========== SALDOS POR CUENTA ========== -->
     <div class="wallet-grid">
       <div class="wallet-card">
         <div class="cur">${icon('coins',11)} Equivalente COP</div>
@@ -728,6 +938,7 @@ function renderWallet(){
       </div>
     </div>
 
+    <!-- ========== ACCIONES ========== -->
     <div class="wallet-actions">
       <button class="btn primary" onclick="newWalletMove()">${icon('plus',16)} Movimiento</button>
       <button class="btn ghost" onclick="newTransfer()" style="border-color:var(--accent);color:var(--accent)">${icon('swap',16)} Transferir</button>
@@ -738,6 +949,7 @@ function renderWallet(){
       </button>
     </div>
 
+    <!-- ========== MOVIMIENTOS ========== -->
     <div class="section-title">Movimientos recientes</div>
     <div class="card" style="padding:6px 14px">
       ${recent.length ? recent.map(m => renderMoveItem(m)).join('')
@@ -832,7 +1044,7 @@ function renderHistory(){
 window.openWhatsAppForSale = id => {
   const h = hist.find(x => x.id === id);
   if (!h || !h.clientPhone) return;
-  const waNumber = normalizePhoneForWA(h.clientPhone);   /* ⭐ normaliza a 584... */
+  const waNumber = normalizePhoneForWA(h.clientPhone);
   const itemStr = h.type === 'phone' ? `📱 *${h.name}*\nIMEI: ${h.imei}` : `🔌 *${h.name}*`;
   const msg = (settings.waTemplate || '')
     .replace(/{cliente}/g, h.client || '')
@@ -921,7 +1133,7 @@ function renderSettings(){
     <div class="section-title">Acerca de</div>
     <div class="card" style="padding:14px">
       <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0">
-        <span style="color:var(--muted)">Versión</span><span>2.5 · Pro P2P VE</span>
+        <span style="color:var(--muted)">Versión</span><span>2.6 · Pro P2P VE</span>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0">
         <span style="color:var(--muted)">Cuenta</span><span>${esc(auth.currentUser?.email || '')}</span>
@@ -1099,7 +1311,6 @@ window.prepSell = (type, id) => {
     closeModal(); await saveAll();
     showToast('Venta registrada · ' + (item.model || item.name), true);
 
-    /* ⭐ NORMALIZA EL TELÉFONO PARA wa.me */
     const waNumber = normalizePhoneForWA(phone);
 
     const msg = (settings.waTemplate || '')
@@ -1311,7 +1522,7 @@ window.resendReceipt = id => {
     if (!input) return;
     rawPhone = input;
   }
-  const waNumber = normalizePhoneForWA(rawPhone);   /* ⭐ normaliza a 584... */
+  const waNumber = normalizePhoneForWA(rawPhone);
   const itemStr = h.type === 'phone' ? `📱 *${h.name}*\nIMEI: ${h.imei}` : `🔌 *${h.name}*`;
   const msg = (settings.waTemplate || '')
     .replace(/{cliente}/g, h.client || '')
