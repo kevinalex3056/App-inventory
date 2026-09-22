@@ -23,6 +23,8 @@
   --shadow-sm:0 1px 2px rgba(16,24,40,.04);
   --shadow:0 1px 3px rgba(16,24,40,.06), 0 8px 24px rgba(16,24,40,.06);
   --radius:14px; --radius-sm:10px; --radius-lg:20px;
+  /* Logo */
+  --logo-bg-1:#0071E3; --logo-bg-2:#0058B8;
 }
 [data-theme="dark"]{
   --bg:#000000; --surface:#1C1C1E; --surface-2:#2C2C2E; --elevated:#1C1C1E;
@@ -35,6 +37,7 @@
   --ring:rgba(10,132,255,.25);
   --shadow-sm:0 1px 2px rgba(0,0,0,.5);
   --shadow:0 1px 3px rgba(0,0,0,.6), 0 8px 24px rgba(0,0,0,.4);
+  --logo-bg-1:#0A84FF; --logo-bg-2:#0066CC;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
@@ -53,49 +56,39 @@ input,select,textarea{outline:none}
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:8px}
 
-/* ============ LOGIN ============ */
-#loginScreen{
-  display:flex;align-items:center;justify-content:center;
-  min-height:100dvh;padding:24px;background:var(--bg);
-}
-.login-box{
-  width:100%;max-width:380px;
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius-lg);padding:32px 26px;
-  box-shadow:var(--shadow);
-}
-.login-logo{
-  width:56px;height:56px;border-radius:16px;margin:0 auto 18px;
-  background:var(--accent);color:var(--accent-text);
+/* ============ LOGO N ============ */
+.logo-N{
   display:grid;place-items:center;
+  background:linear-gradient(135deg, var(--logo-bg-1) 0%, var(--logo-bg-2) 100%);
+  color:#fff;
+  box-shadow:0 4px 14px rgba(0,113,227,.28),
+             inset 0 1px 0 rgba(255,255,255,.18);
+  position:relative;
+  overflow:hidden;
 }
-.login-box h1{
-  font-size:22px;font-weight:600;text-align:center;letter-spacing:-.03em;
-  margin-bottom:6px;
+.logo-N::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 30% 20%, rgba(255,255,255,.22), transparent 60%);
+  pointer-events:none;
 }
-.login-box p.sub{
-  font-size:13px;color:var(--muted);text-align:center;margin-bottom:26px;
-}
+.logo-N svg{position:relative;z-index:1}
+.logo-lg{width:64px;height:64px;border-radius:19px;margin:0 auto 20px}
+.logo-sm{width:36px;height:36px;border-radius:11px;flex:0 0 auto}
+
+/* ============ LOGIN ============ */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100dvh;padding:24px;background:var(--bg)}
+.login-box{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:36px 26px;box-shadow:var(--shadow)}
+.login-box h1{font-size:22px;font-weight:600;text-align:center;letter-spacing:-.03em;margin-bottom:6px}
+.login-box p.sub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:26px}
+
 .field{margin-bottom:12px}
-.field label{
-  display:block;font-size:11.5px;font-weight:600;color:var(--muted);
-  margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;
-}
-.input{
-  width:100%;height:44px;padding:0 14px;
-  background:var(--surface-2);border:1px solid var(--border);
-  border-radius:var(--radius-sm);font-size:15px;
-  transition:border-color .15s, box-shadow .15s;
-}
+.field label{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.input{width:100%;height:44px;padding:0 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:15px;transition:border-color .15s, box-shadow .15s}
 .input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--ring)}
 .input::placeholder{color:var(--faint)}
+select.input{padding-right:36px;appearance:none;background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2386868B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
 
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  height:44px;padding:0 18px;border-radius:var(--radius-sm);
-  font-size:14px;font-weight:600;letter-spacing:-.01em;
-  transition:opacity .15s, transform .1s, background .15s, border-color .15s;
-}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;letter-spacing:-.01em;transition:opacity .15s, transform .1s, background .15s, border-color .15s}
 .btn:active{transform:scale(.98)}
 .btn.primary{background:var(--accent);color:var(--accent-text)}
 .btn.primary:hover{opacity:.88}
@@ -106,246 +99,119 @@ input,select,textarea{outline:none}
 .btn.block{width:100%}
 .btn.sm{height:32px;padding:0 12px;font-size:13px;border-radius:8px}
 
-.login-foot{
-  text-align:center;margin-top:16px;font-size:13px;
-}
+.login-foot{text-align:center;margin-top:16px;font-size:13px}
 .link{color:var(--accent);cursor:pointer;font-weight:500}
 .link:hover{text-decoration:underline}
-.error{
-  color:var(--red);font-size:12.5px;text-align:center;
-  margin-top:12px;padding:10px;background:var(--red-bg);border-radius:8px;
-  display:none;
-}
+.error{color:var(--red);font-size:12.5px;text-align:center;margin-top:12px;padding:10px;background:var(--red-bg);border-radius:8px;display:none}
 .error.show{display:block}
 
 /* ============ HEADER ============ */
-header{
-  position:sticky;top:0;z-index:30;
-  background:color-mix(in srgb, var(--bg) 80%, transparent);
-  backdrop-filter:saturate(180%) blur(20px);
-  -webkit-backdrop-filter:saturate(180%) blur(20px);
-  border-bottom:1px solid var(--border);
-  padding:14px 18px 12px;
-}
+header{position:sticky;top:0;z-index:30;background:color-mix(in srgb, var(--bg) 80%, transparent);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--border);padding:14px 18px 12px}
 .header-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
 .brand{display:flex;align-items:center;gap:10px;min-width:0}
-.brand-mark{
-  width:34px;height:34px;border-radius:10px;background:var(--accent);color:var(--accent-text);
-  display:grid;place-items:center;flex:0 0 auto;
-}
 .brand-info{min-width:0}
 .brand-info h1{font-size:15px;font-weight:600;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .brand-info span{font-size:11px;color:var(--muted)}
-.iconbtn{
-  width:36px;height:36px;border-radius:10px;
-  display:grid;place-items:center;
-  color:var(--muted);border:1px solid transparent;
-  transition:.15s;
-}
+.iconbtn{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:var(--muted);border:1px solid transparent;transition:.15s}
 .iconbtn:hover{background:var(--surface);color:var(--text);border-color:var(--border)}
 
-.search-wrap{
-  position:relative;
-  display:flex;align-items:center;
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius-sm);height:38px;
-  padding:0 12px;gap:8px;color:var(--faint);
-}
+.search-wrap{position:relative;display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);height:38px;padding:0 12px;gap:8px;color:var(--faint)}
 .search-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--ring)}
-.search-wrap input{
-  flex:1;min-width:0;border:0;background:none;height:100%;
-  font-size:14px;color:var(--text);
-}
+.search-wrap input{flex:1;min-width:0;border:0;background:none;height:100%;font-size:14px;color:var(--text)}
 .search-wrap input::placeholder{color:var(--faint)}
 
-/* ============ DASH ============ */
-.dash{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
-  margin-top:12px;
-}
-.dash-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius-sm);padding:10px 12px;
-  transition:border-color .15s;
-}
+.dash{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;transition:border-color .15s}
 .dash-card:hover{border-color:var(--border-2)}
-.dash-card .lbl{
-  font-size:10px;color:var(--muted);font-weight:600;
-  text-transform:uppercase;letter-spacing:.04em;
-  display:flex;align-items:center;gap:4px;
-}
-.dash-card .val{
-  font-size:16px;font-weight:700;letter-spacing:-.02em;
-  margin-top:4px;font-variant-numeric:tabular-nums;
-}
+.dash-card .lbl{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:4px}
+.dash-card .val{font-size:16px;font-weight:700;letter-spacing:-.02em;margin-top:4px;font-variant-numeric:tabular-nums}
 .dash-card.wide{grid-column:span 3}
 .val.pos{color:var(--green)}
 .val.neg{color:var(--red)}
 .val.acc{color:var(--accent)}
 
 /* ============ MAIN ============ */
-main{padding:18px; max-width:760px; margin:0 auto}
-.view{display:none; animation:fade .22s ease}
+main{padding:18px;max-width:760px;margin:0 auto}
+.view{display:none;animation:fade .22s ease}
 .view.active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-/* ============ CARDS ============ */
-.card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius);padding:14px;margin-bottom:10px;
-  transition:border-color .15s;
-}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;transition:border-color .15s}
 .card:hover{border-color:var(--border-2)}
 .card.warn{border-left:3px solid var(--red)}
 
 .row{display:flex;gap:12px;align-items:flex-start}
-.thumb{
-  width:44px;height:44px;flex:0 0 auto;
-  border-radius:12px;background:var(--surface-2);
-  border:1px solid var(--border);
-  display:grid;place-items:center;color:var(--muted);
-}
+.thumb{width:44px;height:44px;flex:0 0 auto;border-radius:12px;background:var(--surface-2);border:1px solid var(--border);display:grid;place-items:center;color:var(--muted)}
 .info{flex:1;min-width:0}
-.title{
-  font-size:14.5px;font-weight:600;letter-spacing:-.015em;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-}
-.sub{
-  font-size:12px;color:var(--muted);margin-top:2px;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-}
-.meta-row{
-  display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;
-}
-.meta-row span{
-  display:flex;flex-direction:column;font-size:11px;color:var(--faint);
-  text-transform:uppercase;letter-spacing:.03em;font-weight:600;
-}
+.title{font-size:14.5px;font-weight:600;letter-spacing:-.015em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sub{font-size:12px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.meta-row{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap}
+.meta-row span{display:flex;flex-direction:column;font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.03em;font-weight:600}
 .meta-row span b{font-size:12.5px;color:var(--text);font-weight:600;text-transform:none;letter-spacing:0;margin-top:1px}
 
-.badge{
-  display:inline-flex;align-items:center;gap:4px;
-  font-size:10.5px;font-weight:600;
-  padding:3px 8px;border-radius:20px;
-  background:var(--green-bg);color:var(--green);
-  white-space:nowrap;
-}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:20px;background:var(--green-bg);color:var(--green);white-space:nowrap}
 .badge.warn{background:var(--amber-bg);color:var(--amber)}
 .badge.neutral{background:var(--surface-2);color:var(--muted)}
 
-.actions{
-  display:flex;gap:6px;margin-top:12px;
-  padding-top:12px;border-top:1px solid var(--border);
-}
+.actions{display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
 .actions .btn{flex:1;height:36px;font-size:13px}
 
-/* Stock control */
 .stock{display:flex;align-items:center;gap:0;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:2px}
-.stock button{
-  width:26px;height:26px;border-radius:6px;color:var(--muted);
-  display:grid;place-items:center;transition:.15s;
-}
+.stock button{width:26px;height:26px;border-radius:6px;color:var(--muted);display:grid;place-items:center;transition:.15s}
 .stock button:hover{background:var(--surface);color:var(--text)}
 .stock b{min-width:32px;text-align:center;font-size:13px;font-weight:600}
 
 /* ============ WALLET ============ */
-.wallet-grid{
-  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;
-}
-.wallet-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius);padding:14px;
-  position:relative;overflow:hidden;
-}
-.wallet-card .cur{
-  display:flex;align-items:center;gap:6px;
-  font-size:11px;color:var(--muted);font-weight:600;
-  text-transform:uppercase;letter-spacing:.04em;
-}
-.wallet-card .amt{
-  font-size:20px;font-weight:700;letter-spacing:-.03em;
-  margin-top:6px;font-variant-numeric:tabular-nums;
-}
+.wallet-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.wallet-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;position:relative;overflow:hidden}
+.wallet-card .cur{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.wallet-card .amt{font-size:20px;font-weight:700;letter-spacing:-.03em;margin-top:6px;font-variant-numeric:tabular-nums}
 .wallet-card.total{grid-column:span 2;background:var(--surface-2)}
 .wallet-card.total .amt{font-size:26px;color:var(--accent)}
 .wallet-card.rate{cursor:pointer}
 .wallet-card.rate:hover{border-color:var(--accent)}
 
+.wallet-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.wallet-actions .btn{height:44px}
+
 /* ============ HISTORY ITEM ============ */
-.h-item{
-  display:flex;justify-content:space-between;gap:12px;
-  padding:12px 0;border-bottom:1px solid var(--border);
-}
+.h-item{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
 .h-item:last-child{border-bottom:none}
 .h-item .left{flex:1;min-width:0}
-.h-item .l1{font-size:13.5px;font-weight:600;margin-bottom:2px}
+.h-item .l1{font-size:13.5px;font-weight:600;margin-bottom:2px;display:flex;align-items:center;gap:6px}
 .h-item .l2{font-size:11.5px;color:var(--muted)}
 .h-item .right{text-align:right;font-variant-numeric:tabular-nums}
 .h-item .amt{font-size:13.5px;font-weight:600}
 .h-item .prof{font-size:11px;color:var(--green);font-weight:600;margin-top:2px}
 
+.tag-swap{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:10px;font-weight:700;padding:2px 6px;
+  border-radius:5px;background:var(--accent);
+  color:#fff;letter-spacing:.02em;
+}
+
 /* ============ BOTTOM NAV ============ */
-.bottom-nav{
-  position:fixed;left:0;right:0;bottom:0;z-index:40;
-  display:grid;grid-template-columns:repeat(5,1fr);
-  background:color-mix(in srgb, var(--surface) 92%, transparent);
-  backdrop-filter:saturate(180%) blur(20px);
-  -webkit-backdrop-filter:saturate(180%) blur(20px);
-  border-top:1px solid var(--border);
-  padding:6px 4px calc(6px + env(safe-area-inset-bottom));
-}
-.nav-item{
-  display:flex;flex-direction:column;align-items:center;gap:3px;
-  padding:6px 2px;border-radius:10px;
-  color:var(--faint);font-size:10px;font-weight:600;
-  transition:color .15s, background .15s;
-}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(5,1fr);background:color-mix(in srgb, var(--surface) 92%, transparent);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-top:1px solid var(--border);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;border-radius:10px;color:var(--faint);font-size:10px;font-weight:600;transition:color .15s, background .15s}
 .nav-item.active{color:var(--accent)}
 .nav-item:hover{color:var(--text)}
-.nav-item.active:hover{color:var(--accent)}
 .nav-item svg{transition:transform .15s}
 .nav-item.active svg{transform:translateY(-1px)}
 
 /* ============ FAB ============ */
-.fab{
-  position:fixed;right:20px;
-  bottom:calc(82px + env(safe-area-inset-bottom));
-  width:52px;height:52px;border-radius:16px;
-  background:var(--accent);color:var(--accent-text);
-  box-shadow:0 8px 24px rgba(0,113,227,.35);
-  display:grid;place-items:center;z-index:35;
-  transition:transform .15s, box-shadow .15s;
-}
+.fab{position:fixed;right:20px;bottom:calc(82px + env(safe-area-inset-bottom));width:52px;height:52px;border-radius:16px;background:var(--accent);color:var(--accent-text);box-shadow:0 8px 24px rgba(0,113,227,.35);display:grid;place-items:center;z-index:35;transition:transform .15s, box-shadow .15s}
 .fab:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,113,227,.45)}
 .fab:active{transform:scale(.95)}
 .fab.hide{display:none}
 
 /* ============ MODAL ============ */
-.modal{
-  position:fixed;inset:0;z-index:100;
-  display:none;align-items:flex-end;justify-content:center;
-  background:rgba(0,0,0,.4);
-  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
-  animation:fade .2s ease;
-}
+.modal{position:fixed;inset:0;z-index:100;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);animation:fade .2s ease}
 .modal.show{display:flex}
-.modal-content{
-  width:100%;max-width:520px;
-  background:var(--surface);
-  border-radius:var(--radius-lg) var(--radius-lg) 0 0;
-  padding:8px 20px calc(24px + env(safe-area-inset-bottom));
-  max-height:92dvh;overflow-y:auto;
-  animation:sheet .28s cubic-bezier(.2,.8,.3,1);
-}
+.modal-content{width:100%;max-width:520px;background:var(--surface);border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:8px 20px calc(24px + env(safe-area-inset-bottom));max-height:92dvh;overflow-y:auto;animation:sheet .28s cubic-bezier(.2,.8,.3,1)}
 @keyframes sheet{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.handle{
-  width:36px;height:4px;border-radius:2px;
-  background:var(--border-2);margin:6px auto 14px;
-}
-.modal-head{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:18px;
-}
+.handle{width:36px;height:4px;border-radius:2px;background:var(--border-2);margin:6px auto 14px}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
 .modal-head h2{font-size:17px;font-weight:600;letter-spacing:-.02em}
 .modal-foot{display:flex;gap:8px;margin-top:18px}
 .modal-foot .btn{flex:1}
@@ -354,93 +220,66 @@ main{padding:18px; max-width:760px; margin:0 auto}
 .form-grid .full{grid-column:1/-1}
 @media(max-width:520px){.form-grid{grid-template-columns:1fr}}
 
+/* ============ SWAP VISUAL ============ */
+.swap-wrap{
+  display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:end;
+}
+.swap-mid{
+  display:grid;place-items:center;
+  width:38px;height:38px;border-radius:11px;
+  background:var(--surface-2);border:1px solid var(--border);
+  color:var(--muted);cursor:pointer;
+  transition:.15s;margin-bottom:1px;
+}
+.swap-mid:hover{background:var(--accent);color:#fff;border-color:transparent;transform:rotate(180deg)}
+
+.convert-box{
+  padding:14px;border-radius:12px;
+  background:linear-gradient(135deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 78%, #000) 100%);
+  color:#fff;margin:14px 0 4px;
+  position:relative;overflow:hidden;
+}
+.convert-box::after{
+  content:'';position:absolute;top:-40%;right:-30%;
+  width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle, rgba(255,255,255,.14), transparent 70%);
+}
+.convert-box .lbl{font-size:11px;opacity:.75;font-weight:600;text-transform:uppercase;letter-spacing:.05em;position:relative}
+.convert-box .out{font-size:26px;font-weight:700;margin-top:6px;letter-spacing:-.03em;font-variant-numeric:tabular-nums;position:relative}
+.convert-box .rate{font-size:11.5px;opacity:.78;margin-top:6px;position:relative}
+
 /* ============ CONFIRM ============ */
-.confirm-box{
-  text-align:center;padding:8px 0;
-}
-.confirm-ic{
-  width:52px;height:52px;border-radius:50%;
-  background:var(--red-bg);color:var(--red);
-  display:grid;place-items:center;margin:0 auto 14px;
-}
+.confirm-box{text-align:center;padding:8px 0}
+.confirm-ic{width:52px;height:52px;border-radius:50%;background:var(--red-bg);color:var(--red);display:grid;place-items:center;margin:0 auto 14px}
 .confirm-box h3{font-size:16px;font-weight:600;margin-bottom:6px;letter-spacing:-.02em}
 .confirm-box p{font-size:13px;color:var(--muted);line-height:1.5}
 
-/* ============ TOAST / UNDO ============ */
-.toasts{
-  position:fixed;left:50%;transform:translateX(-50%);
-  bottom:calc(96px + env(safe-area-inset-bottom));
-  z-index:200;display:flex;flex-direction:column-reverse;gap:8px;
-  width:max-content;max-width:calc(100vw - 24px);
-  pointer-events:none;
-}
-.toast{
-  display:flex;align-items:center;gap:12px;
-  padding:10px 12px 10px 16px;
-  background:var(--text);color:var(--bg);
-  border-radius:12px;font-size:13px;font-weight:500;
-  box-shadow:0 10px 34px rgba(0,0,0,.25);
-  opacity:0;transform:translateY(12px) scale(.96);
-  transition:.25s cubic-bezier(.2,.8,.3,1);
-  pointer-events:auto;max-width:100%;
-}
+/* ============ TOAST ============ */
+.toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom));z-index:200;display:flex;flex-direction:column-reverse;gap:8px;width:max-content;max-width:calc(100vw - 24px);pointer-events:none}
+.toast{display:flex;align-items:center;gap:12px;padding:10px 12px 10px 16px;background:var(--text);color:var(--bg);border-radius:12px;font-size:13px;font-weight:500;box-shadow:0 10px 34px rgba(0,0,0,.25);opacity:0;transform:translateY(12px) scale(.96);transition:.25s cubic-bezier(.2,.8,.3,1);pointer-events:auto;max-width:100%}
 .toast.show{opacity:1;transform:translateY(0) scale(1)}
 .toast .msg{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.toast .undo{
-  display:inline-flex;align-items:center;gap:5px;
-  padding:6px 11px;border-radius:8px;
-  background:rgba(255,255,255,.14);
-  font-size:12.5px;font-weight:600;
-  color:inherit;transition:background .15s;
-}
+.toast .undo{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:8px;background:rgba(255,255,255,.14);font-size:12.5px;font-weight:600;color:inherit;transition:background .15s}
 .toast .undo:hover{background:rgba(255,255,255,.24)}
 
 /* ============ SETTINGS ============ */
-.setting-item{
-  display:flex;align-items:center;gap:14px;
-  padding:14px 0;border-bottom:1px solid var(--border);
-}
+.setting-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
 .setting-item:last-child{border-bottom:none}
-.setting-icon{
-  width:34px;height:34px;border-radius:10px;
-  background:var(--surface-2);border:1px solid var(--border);
-  display:grid;place-items:center;color:var(--muted);
-  flex:0 0 auto;
-}
+.setting-icon{width:34px;height:34px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);display:grid;place-items:center;color:var(--muted);flex:0 0 auto}
 .setting-info{flex:1;min-width:0}
 .setting-info .st{font-size:14px;font-weight:500;letter-spacing:-.01em}
-.setting-info .ss{font-size:12px;color:var(--muted);margin-top:1px;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.switch{
-  width:44px;height:26px;border-radius:20px;
-  background:var(--border-2);position:relative;
-  transition:background .2s;flex:0 0 auto;
-}
+.setting-info .ss{font-size:12px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.switch{width:44px;height:26px;border-radius:20px;background:var(--border-2);position:relative;transition:background .2s;flex:0 0 auto}
 .switch.on{background:var(--accent)}
-.switch::after{
-  content:'';position:absolute;top:2px;left:2px;
-  width:22px;height:22px;border-radius:50%;background:#fff;
-  transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);
-}
+.switch::after{content:'';position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .switch.on::after{transform:translateX(18px)}
 
 /* ============ MISC ============ */
-.empty{
-  text-align:center;padding:54px 24px;color:var(--muted);
-}
-.empty-ic{
-  width:56px;height:56px;border-radius:16px;
-  background:var(--surface);border:1px solid var(--border);
-  display:grid;place-items:center;margin:0 auto 14px;color:var(--faint);
-}
+.empty{text-align:center;padding:54px 24px;color:var(--muted)}
+.empty-ic{width:56px;height:56px;border-radius:16px;background:var(--surface);border:1px solid var(--border);display:grid;place-items:center;margin:0 auto 14px;color:var(--faint)}
 .empty h3{font-size:14.5px;font-weight:600;color:var(--text);margin-bottom:4px}
 .empty p{font-size:13px;max-width:300px;margin:0 auto;line-height:1.5}
-
-.section-title{
-  font-size:11px;font-weight:600;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.06em;
-  margin:20px 4px 10px;
-}
+.section-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:20px 4px 10px}
 
 @media(min-width:700px){
   .modal{align-items:center;padding:20px}
@@ -456,7 +295,7 @@ main{padding:18px; max-width:760px; margin:0 auto}
 <!-- ============ LOGIN ============ -->
 <div id="loginScreen">
   <div class="login-box">
-    <div class="login-logo" id="loginLogo"></div>
+    <div class="logo-N logo-lg" id="loginLogo"></div>
     <h1>Mi Negocio Pro</h1>
     <p class="sub">Inicia sesión para gestionar tu inventario</p>
     <div class="field">
@@ -473,7 +312,6 @@ main{padding:18px; max-width:760px; margin:0 auto}
   </div>
 </div>
 
-<!-- ============ LOADER ============ -->
 <div id="loader" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:999;place-items:center;">
   <div style="text-align:center">
     <div style="width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;margin:0 auto 12px;animation:spin .8s linear infinite"></div>
@@ -484,11 +322,10 @@ main{padding:18px; max-width:760px; margin:0 auto}
 
 <!-- ============ APP ============ -->
 <div id="mainApp" style="display:none">
-
   <header>
     <div class="header-row">
       <div class="brand">
-        <div class="brand-mark" id="brandMark"></div>
+        <div class="logo-N logo-sm" id="brandMark"></div>
         <div class="brand-info">
           <h1 id="brandName">Mi Negocio</h1>
           <span id="headerSub">Panel general</span>
@@ -525,10 +362,7 @@ main{padding:18px; max-width:760px; margin:0 auto}
   </nav>
 </div>
 
-<!-- ============ MODAL ROOT ============ -->
 <div class="modal" id="modalRoot"></div>
-
-<!-- ============ TOASTS ============ -->
 <div class="toasts" id="toasts"></div>
 
 <script type="module">
@@ -554,7 +388,7 @@ const auth = getAuth(app);
 const db   = getFirestore(app);
 
 /* ============================================================
-   ICONOS SVG (estilo lineal elegante, tipo Lucide)
+   ICONOS SVG
 ============================================================ */
 const ICONS = {
   box:'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/>',
@@ -562,7 +396,6 @@ const ICONS = {
   plug:'<path d="M12 22v-5"/><path d="M9 7V2"/><path d="M15 7V2"/><path d="M6 13V8h12v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4z"/>',
   wallet:'<path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>',
   coins:'<circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/>',
-  cart:'<circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>',
   chart:'<path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>',
   settings:'<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
   logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>',
@@ -572,7 +405,6 @@ const ICONS = {
   undo:'<path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>',
   trash:'<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
   edit:'<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/>',
-  check:'<polyline points="20 6 9 17 4 12"/>',
   alert:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
   sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
   moon:'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
@@ -580,20 +412,29 @@ const ICONS = {
   upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
   message:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
   tag:'<path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.83Z"/><circle cx="7" cy="7" r="1"/>',
-  file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
   percentage:'<line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>',
   refresh:'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>',
-  eye:'<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
   smartphone:'<rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>',
-  history:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/>'
+  swap:'<path d="M7 4v16"/><path d="M3 8l4-4 4 4"/><path d="M17 20V4"/><path d="M21 16l-4 4-4-4"/>',
+  swapH:'<path d="M4 7h16"/><path d="M8 3 4 7l4 4"/><path d="M20 17H4"/><path d="M16 21l4-4-4-4"/>',
+  arrowRight:'<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>'
 };
 function icon(name, size = 20, sw = 1.9){
   return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]||''}</svg>`;
 }
 
+/* ============ LOGO N MINIMALISTA ============ */
+function logoN(size = 20, sw = 2.6){
+  // N minimalista: trazo continuo con remates redondeados
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7 19V5l10 14V5"/>
+  </svg>`;
+}
+
 /* ============================================================
-   ESTADO GLOBAL
+   ESTADO
 ============================================================ */
 let phones = [], acc = [], hist = [], movs = [];
 let wallet = { usd:0, cop:0, usdt:0, zinli:0, rate:4000 };
@@ -606,8 +447,8 @@ let settings = {
 let userUID = null;
 let currentTab = 'phones';
 let searchQ = '';
-let pendingSale = null;   // { type, id }
-let undoStack = [];       // [{ label, snapshot, at }]
+let pendingSale = null;
+let undoStack = [];
 
 /* ============================================================
    UTILS
@@ -619,6 +460,13 @@ const fMoney = (n, sym = '$') => sym + (parseFloat(n)||0).toLocaleString('en-US'
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate = d => new Date(d).toLocaleDateString('es', { day:'2-digit', month:'short', year:'numeric' });
 
+const ACCOUNTS = {
+  usd:   { label:'Efectivo USD', sym:'$', cur:'USD',  dollar:true },
+  cop:   { label:'Efectivo COP', sym:'$', cur:'COP',  dollar:false },
+  usdt:  { label:'USDT',         sym:'$', cur:'USDT', dollar:true },
+  zinli: { label:'Zinli',        sym:'$', cur:'Zinli',dollar:true }
+};
+
 function applyTheme(){
   document.documentElement.dataset.theme = settings.theme;
   document.querySelector('meta[name="theme-color"]')
@@ -626,11 +474,9 @@ function applyTheme(){
 }
 
 /* ============================================================
-   UNDO SYSTEM
+   UNDO
 ============================================================ */
-function snapshot(){
-  return JSON.parse(JSON.stringify({ phones, acc, hist, movs, wallet }));
-}
+function snapshot(){ return JSON.parse(JSON.stringify({ phones, acc, hist, movs, wallet })); }
 function pushUndo(label){
   undoStack.push({ label, snapshot: snapshot(), at: new Date().toISOString() });
   if (undoStack.length > 30) undoStack.shift();
@@ -656,12 +502,8 @@ function showToast(msg, undoable = false){
     (undoable ? `<button class="undo">${icon('undo',14,2.1)} Deshacer</button>` : '');
   wrap.appendChild(el);
   requestAnimationFrame(() => el.classList.add('show'));
-
   if (undoable){
-    el.querySelector('.undo').onclick = async () => {
-      closeToast(el);
-      await undoLast();
-    };
+    el.querySelector('.undo').onclick = async () => { closeToast(el); await undoLast(); };
   }
   const t = setTimeout(() => closeToast(el), 6500);
   toastTimers.set(el, t);
@@ -688,12 +530,9 @@ onAuthStateChanged(auth, async user => {
     $('#loginScreen').style.display = 'flex';
   }
 });
-
 window.login = () => {
-  const email = $('#emailInput').value.trim();
-  const pass  = $('#passwordInput').value;
   $('#loginError').classList.remove('show');
-  signInWithEmailAndPassword(auth, email, pass)
+  signInWithEmailAndPassword(auth, $('#emailInput').value.trim(), $('#passwordInput').value)
     .catch(() => $('#loginError').classList.add('show'));
 };
 window.logout = () => signOut(auth);
@@ -722,24 +561,15 @@ async function loadData(){
       settings = Object.assign(settings, d.settings || {});
     }
     applyTheme();
-  } catch(e){
-    console.error(e);
-    alert('Error al cargar los datos.');
-  }
+  } catch(e){ console.error(e); alert('Error al cargar los datos.'); }
   $('#loader').style.display = 'none';
 }
-
 async function saveAll(){
   $('#loader').style.display = 'grid';
   try{
-    await setDoc(doc(db, 'business_data', userUID), {
-      phones, acc, hist, movs, wallet, settings
-    });
+    await setDoc(doc(db, 'business_data', userUID), { phones, acc, hist, movs, wallet, settings });
     render();
-  } catch(e){
-    console.error(e);
-    alert('No se pudo guardar.');
-  }
+  } catch(e){ console.error(e); alert('No se pudo guardar.'); }
   $('#loader').style.display = 'none';
 }
 
@@ -747,20 +577,17 @@ async function saveAll(){
    BOOT UI
 ============================================================ */
 function bootUI(){
-  $('#loginLogo').innerHTML  = icon('smartphone', 28, 1.8);
-  $('#brandMark').innerHTML  = icon('box', 18, 2);
-  $('#settingsBtn').innerHTML= icon('settings', 18);
-  $('#logoutBtn').innerHTML  = icon('logout', 18);
-  $('#searchIcon').innerHTML = icon('search', 16, 2);
-  $('#fabBtn').innerHTML     = icon('plus', 22, 2.4);
-
-  // nav icons
+  $('#loginLogo').innerHTML = logoN(30, 2.4);
+  $('#brandMark').innerHTML = logoN(20, 2.7);
+  $('#settingsBtn').innerHTML = icon('settings', 18);
+  $('#logoutBtn').innerHTML   = icon('logout', 18);
+  $('#searchIcon').innerHTML  = icon('search', 16, 2);
+  $('#fabBtn').innerHTML      = icon('plus', 22, 2.4);
   ['phones','acc','wallet','history','settings'].forEach(t => {
     const el = document.getElementById('navIcons-' + t);
     const ic = { phones:'phone', acc:'plug', wallet:'wallet', history:'chart', settings:'settings' }[t];
     if (el) el.innerHTML = icon(ic, 20, 1.9);
   });
-
   render();
 }
 
@@ -773,33 +600,27 @@ window.switchTab = (tab, ev) => {
   const si = $('#searchInput'); if (si) si.value = '';
   $$('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.tab === tab));
   $$('.view').forEach(el => el.classList.toggle('active', el.id === 'view-' + tab));
-
   const showSearch = tab === 'phones' || tab === 'acc';
   $('#searchWrap').style.display = showSearch ? 'flex' : 'none';
-
   const fab = $('#fabBtn');
   fab.classList.toggle('hide', tab === 'history' || tab === 'settings');
-
   render();
 };
 
 /* ============================================================
-   RENDER PRINCIPAL
+   RENDER
 ============================================================ */
 window.render = render;
 function render(){
   searchQ = ($('#searchInput')?.value || '').toLowerCase().trim();
   $('#brandName').textContent = settings.businessName || 'Mi Negocio';
-
   if (currentTab === 'phones')  renderPhones();
   if (currentTab === 'acc')     renderAcc();
   if (currentTab === 'wallet')  renderWallet();
   if (currentTab === 'history') renderHistory();
   if (currentTab === 'settings')renderSettings();
-
   updateHeaderSub();
 }
-
 function updateHeaderSub(){
   const map = {
     phones: `${phones.length} equipos en inventario`,
@@ -817,14 +638,10 @@ function updateHeaderSub(){
 function renderPhones(){
   let cost = 0, price = 0;
   const items = phones.filter(p =>
-    !searchQ ||
-    (p.model || '').toLowerCase().includes(searchQ) ||
-    (p.imei  || '').toLowerCase().includes(searchQ)
+    !searchQ || (p.model || '').toLowerCase().includes(searchQ) || (p.imei || '').toLowerCase().includes(searchQ)
   );
-
   items.forEach(p => { cost += +p.cost || 0; price += +p.price || 0; });
 
-  // Dashboard
   $('#dashGrid').innerHTML = `
     <div class="dash-card">
       <div class="lbl">${icon('box',11)} Inversión</div>
@@ -839,11 +656,9 @@ function renderPhones(){
       <div class="val pos">+${fMoney(price - cost)}</div>
     </div>`;
 
-  // List
   if (!items.length){
     $('#view-phones').innerHTML = emptyState('phone', 'Sin equipos',
-      searchQ ? 'No se encontraron equipos con esa búsqueda.'
-             : 'Presiona el botón + para agregar tu primer equipo.');
+      searchQ ? 'No se encontraron equipos con esa búsqueda.' : 'Presiona el botón + para agregar tu primer equipo.');
     return;
   }
 
@@ -869,15 +684,9 @@ function renderPhones(){
           </div>
         </div>
         <div class="actions">
-          <button class="btn green" onclick="prepSell('phone','${p.id}')">
-            ${icon('tag',15)} Vender
-          </button>
-          <button class="btn ghost" onclick="editPhone('${p.id}')" title="Editar" style="flex:0 0 42px">
-            ${icon('edit',15)}
-          </button>
-          <button class="btn ghost" onclick="confirmDelete('phone','${p.id}')" title="Eliminar" style="flex:0 0 42px">
-            ${icon('trash',15)}
-          </button>
+          <button class="btn green" onclick="prepSell('phone','${p.id}')">${icon('tag',15)} Vender</button>
+          <button class="btn ghost" onclick="editPhone('${p.id}')" title="Editar" style="flex:0 0 42px">${icon('edit',15)}</button>
+          <button class="btn ghost" onclick="confirmDelete('phone','${p.id}')" title="Eliminar" style="flex:0 0 42px">${icon('trash',15)}</button>
         </div>
       </div>`;
   }).join('');
@@ -914,7 +723,7 @@ function renderAcc(){
             <div class="sub">Costo ${fMoney(a.cost)} · Venta ${fMoney(a.price)}</div>
             <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px">
               <div class="stock">
-                <button onclick="modStock('${a.id}', -1)">${icon('x', 12, 2.5).replace('6','8').replace('18','16')}</button>
+                <button onclick="modStock('${a.id}', -1)">${icon('x', 12, 2.5)}</button>
                 <b>${a.qty}</b>
                 <button onclick="modStock('${a.id}', 1)">${icon('plus', 12, 2.5)}</button>
               </div>
@@ -936,7 +745,7 @@ function renderAcc(){
 function renderWallet(){
   const eqCop = wallet.rate ? (wallet.cop / wallet.rate) : 0;
   const total = wallet.usd + wallet.usdt + wallet.zinli + eqCop;
-  const recent = movs.slice(-8).reverse();
+  const recent = movs.slice(-12).reverse();
 
   $('#dashGrid').innerHTML = `
     <div class="dash-card wide" style="background:var(--surface-2)">
@@ -968,24 +777,56 @@ function renderWallet(){
       </div>
     </div>
 
+    <div class="wallet-actions">
+      <button class="btn primary" onclick="newWalletMove()">
+        ${icon('plus',16)} Movimiento
+      </button>
+      <button class="btn ghost" onclick="newTransfer()" style="border-color:var(--accent);color:var(--accent)">
+        ${icon('swap',16)} Transferir
+      </button>
+    </div>
+
     <div class="section-title">Movimientos recientes</div>
     <div class="card" style="padding:6px 14px">
-      ${recent.length ? recent.map(m => `
-        <div class="h-item">
-          <div class="left">
-            <div class="l1">${esc(m.desc)}</div>
-            <div class="l2">${fmtDate(m.date)} · ${esc(m.acc.toUpperCase())}</div>
-          </div>
-          <div class="right">
-            <div class="amt ${m.type === 'gasto' ? 'neg' : 'pos'}">
-              ${m.type === 'gasto' ? '−' : '+'}${fMoney(m.amt)}
-            </div>
-            <button class="btn ghost sm" style="margin-top:4px" onclick="undoMove('${m.id}')">${icon('undo',11)}</button>
-          </div>
-        </div>`).join('')
+      ${recent.length ? recent.map(m => renderMoveItem(m)).join('')
         : `<div style="padding:24px;text-align:center;color:var(--muted);font-size:13px">Sin movimientos aún</div>`}
     </div>
   `;
+}
+
+function renderMoveItem(m){
+  if (m.type === 'transfer'){
+    const from = ACCOUNTS[m.from]?.label || m.from;
+    const to   = ACCOUNTS[m.to]?.label || m.to;
+    return `
+      <div class="h-item">
+        <div class="left">
+          <div class="l1">
+            <span class="tag-swap">${icon('swap',10,2.6)} TRANSF</span>
+            ${esc(from)} → ${esc(to)}
+          </div>
+          <div class="l2">${fmtDate(m.date)}</div>
+        </div>
+        <div class="right">
+          <div class="amt">−${fMoney(m.amt)}</div>
+          <div class="prof">+${fMoney(m.amtIn)}</div>
+          <button class="btn ghost sm" style="margin-top:4px" onclick="undoMove('${m.id}')">${icon('undo',11)}</button>
+        </div>
+      </div>`;
+  }
+  return `
+    <div class="h-item">
+      <div class="left">
+        <div class="l1">${esc(m.desc)}</div>
+        <div class="l2">${fmtDate(m.date)} · ${esc((m.acc||'').toUpperCase())}</div>
+      </div>
+      <div class="right">
+        <div class="amt ${m.type === 'gasto' ? 'neg' : 'pos'}">
+          ${m.type === 'gasto' ? '−' : '+'}${fMoney(m.amt)}
+        </div>
+        <button class="btn ghost sm" style="margin-top:4px" onclick="undoMove('${m.id}')">${icon('undo',11)}</button>
+      </div>
+    </div>`;
 }
 
 /* ============================================================
@@ -1006,7 +847,6 @@ function renderHistory(){
     </div>`;
 
   const list = hist.slice().reverse();
-
   $('#view-history').innerHTML = `
     <button class="btn ghost block" onclick="exportToCSV()" style="margin-bottom:14px">
       ${icon('download',16)} Descargar reporte CSV
@@ -1032,8 +872,7 @@ function renderHistory(){
             <button class="btn ghost" style="flex:0 0 42px" onclick="resendReceipt('${h.id}')" title="Reenviar WhatsApp">${icon('message',14)}</button>
           </div>
         </div>`;
-    }).join('')
-    : emptyState('chart', 'Sin ventas', 'Aquí aparecerá el historial de todas tus ventas.')}
+    }).join('') : emptyState('chart', 'Sin ventas', 'Aquí aparecerá el historial de todas tus ventas.')}
   `;
 }
 
@@ -1043,23 +882,16 @@ function renderHistory(){
 function renderSettings(){
   $('#dashGrid').innerHTML = '';
   const isDark = settings.theme === 'dark';
-
   $('#view-settings').innerHTML = `
     <div class="section-title">Negocio</div>
     <div class="card" style="padding:4px 14px">
       <div class="setting-item" onclick="editBusinessName()">
         <div class="setting-icon">${icon('box',16)}</div>
-        <div class="setting-info">
-          <div class="st">Nombre del negocio</div>
-          <div class="ss">${esc(settings.businessName)}</div>
-        </div>
+        <div class="setting-info"><div class="st">Nombre del negocio</div><div class="ss">${esc(settings.businessName)}</div></div>
       </div>
       <div class="setting-item" onclick="editWaTemplate()">
         <div class="setting-icon">${icon('message',16)}</div>
-        <div class="setting-info">
-          <div class="st">Plantilla de WhatsApp</div>
-          <div class="ss">Personaliza el mensaje de recibo</div>
-        </div>
+        <div class="setting-info"><div class="st">Plantilla de WhatsApp</div><div class="ss">Personaliza el mensaje de recibo</div></div>
       </div>
     </div>
 
@@ -1067,17 +899,11 @@ function renderSettings(){
     <div class="card" style="padding:4px 14px">
       <div class="setting-item" onclick="editLowStock()">
         <div class="setting-icon">${icon('alert',16)}</div>
-        <div class="setting-info">
-          <div class="st">Alerta de stock bajo</div>
-          <div class="ss">Notificar cuando queden ${settings.lowStock} o menos</div>
-        </div>
+        <div class="setting-info"><div class="st">Alerta de stock bajo</div><div class="ss">Notificar cuando queden ${settings.lowStock} o menos</div></div>
       </div>
       <div class="setting-item" onclick="updateRate()">
         <div class="setting-icon">${icon('refresh',16)}</div>
-        <div class="setting-info">
-          <div class="st">Tasa COP / USD</div>
-          <div class="ss">$1 USD = ${fMoney(wallet.rate, '$')} COP</div>
-        </div>
+        <div class="setting-info"><div class="st">Tasa COP / USD</div><div class="ss">$1 USD = ${fMoney(wallet.rate, '$')} COP</div></div>
       </div>
     </div>
 
@@ -1085,10 +911,7 @@ function renderSettings(){
     <div class="card" style="padding:4px 14px">
       <div class="setting-item" onclick="toggleTheme()">
         <div class="setting-icon">${icon(isDark ? 'moon' : 'sun', 16)}</div>
-        <div class="setting-info">
-          <div class="st">Tema ${isDark ? 'oscuro' : 'claro'}</div>
-          <div class="ss">Cambia el aspecto de la aplicación</div>
-        </div>
+        <div class="setting-info"><div class="st">Tema ${isDark ? 'oscuro' : 'claro'}</div><div class="ss">Cambia el aspecto de la aplicación</div></div>
         <div class="switch ${isDark ? 'on' : ''}"></div>
       </div>
     </div>
@@ -1097,31 +920,22 @@ function renderSettings(){
     <div class="card" style="padding:4px 14px">
       <div class="setting-item" onclick="exportBackup()">
         <div class="setting-icon">${icon('download',16)}</div>
-        <div class="setting-info">
-          <div class="st">Descargar respaldo JSON</div>
-          <div class="ss">Guarda todos tus datos en un archivo</div>
-        </div>
+        <div class="setting-info"><div class="st">Descargar respaldo JSON</div><div class="ss">Guarda todos tus datos en un archivo</div></div>
       </div>
       <div class="setting-item" onclick="importBackup()">
         <div class="setting-icon">${icon('upload',16)}</div>
-        <div class="setting-info">
-          <div class="st">Restaurar respaldo</div>
-          <div class="ss">Carga datos desde un archivo JSON</div>
-        </div>
+        <div class="setting-info"><div class="st">Restaurar respaldo</div><div class="ss">Carga datos desde un archivo JSON</div></div>
       </div>
       <div class="setting-item" onclick="clearAllData()">
         <div class="setting-icon" style="color:var(--red);background:var(--red-bg);border-color:transparent">${icon('trash',16)}</div>
-        <div class="setting-info">
-          <div class="st" style="color:var(--red)">Borrar todos los datos</div>
-          <div class="ss">Esta acción no se puede deshacer</div>
-        </div>
+        <div class="setting-info"><div class="st" style="color:var(--red)">Borrar todos los datos</div><div class="ss">Esta acción no se puede deshacer</div></div>
       </div>
     </div>
 
     <div class="section-title">Acerca de</div>
     <div class="card" style="padding:14px">
       <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0">
-        <span style="color:var(--muted)">Versión</span><span>2.0 · Pro</span>
+        <span style="color:var(--muted)">Versión</span><span>2.1 · Pro</span>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0">
         <span style="color:var(--muted)">Cuenta</span><span>${esc(auth.currentUser?.email || '')}</span>
@@ -1142,14 +956,11 @@ function emptyState(ic, title, text){
 }
 
 /* ============================================================
-   MODALES BASE
+   MODALES
 ============================================================ */
 function openModal(html){
   const root = $('#modalRoot');
-  root.innerHTML = `<div class="modal-content">
-    <div class="handle"></div>
-    ${html}
-  </div>`;
+  root.innerHTML = `<div class="modal-content"><div class="handle"></div>${html}</div>`;
   root.classList.add('show');
   document.body.style.overflow = 'hidden';
   root.onclick = e => { if (e.target === root) closeModal(); };
@@ -1160,14 +971,12 @@ function closeModal(){
   document.body.style.overflow = '';
 }
 window.closeModals = closeModal;
-
 function modalHeader(title){
   return `<div class="modal-head">
     <h2>${esc(title)}</h2>
     <button class="iconbtn" onclick="closeModals()">${icon('x',18)}</button>
   </div>`;
 }
-
 function confirmDialog({ title, text, confirmLabel='Eliminar', onConfirm }){
   openModal(`
     <div class="confirm-box">
@@ -1184,7 +993,7 @@ function confirmDialog({ title, text, confirmLabel='Eliminar', onConfirm }){
 }
 
 /* ============================================================
-   FORM · PHONE (NUEVO / EDITAR)
+   FORM · PHONE
 ============================================================ */
 window.editPhone = id => {
   const p = phones.find(x => x.id === id);
@@ -1192,30 +1001,12 @@ window.editPhone = id => {
   openModal(`
     ${modalHeader('Editar equipo')}
     <form id="fPhone" class="form-grid">
-      <div class="field full">
-        <label>Modelo y capacidad</label>
-        <input class="input" name="model" required value="${esc(p.model)}" placeholder="iPhone 13 128GB">
-      </div>
-      <div class="field full">
-        <label>IMEI / Serial</label>
-        <input class="input" name="imei" required value="${esc(p.imei)}">
-      </div>
-      <div class="field">
-        <label>Batería %</label>
-        <input class="input" name="bat" type="number" min="0" max="100" required value="${esc(p.bat)}">
-      </div>
-      <div class="field">
-        <label>Notas</label>
-        <input class="input" name="notes" value="${esc(p.notes || '')}" placeholder="Opcional">
-      </div>
-      <div class="field">
-        <label>Costo (USD)</label>
-        <input class="input" name="cost" type="number" step="0.01" required value="${esc(p.cost)}">
-      </div>
-      <div class="field">
-        <label>Precio venta (USD)</label>
-        <input class="input" name="price" type="number" step="0.01" required value="${esc(p.price)}">
-      </div>
+      <div class="field full"><label>Modelo y capacidad</label><input class="input" name="model" required value="${esc(p.model)}"></div>
+      <div class="field full"><label>IMEI / Serial</label><input class="input" name="imei" required value="${esc(p.imei)}"></div>
+      <div class="field"><label>Batería %</label><input class="input" name="bat" type="number" min="0" max="100" required value="${esc(p.bat)}"></div>
+      <div class="field"><label>Notas</label><input class="input" name="notes" value="${esc(p.notes || '')}" placeholder="Opcional"></div>
+      <div class="field"><label>Costo (USD)</label><input class="input" name="cost" type="number" step="0.01" required value="${esc(p.cost)}"></div>
+      <div class="field"><label>Precio venta (USD)</label><input class="input" name="price" type="number" step="0.01" required value="${esc(p.price)}"></div>
       <div class="modal-foot full">
         <button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button>
         <button type="submit" class="btn primary">Guardar cambios</button>
@@ -1227,8 +1018,7 @@ window.editPhone = id => {
     pushUndo('Editar equipo · ' + p.model);
     const fd = new FormData(e.target);
     Object.assign(p, {
-      model: fd.get('model'), imei: fd.get('imei'),
-      bat: fd.get('bat'), notes: fd.get('notes'),
+      model: fd.get('model'), imei: fd.get('imei'), bat: fd.get('bat'), notes: fd.get('notes'),
       cost: +fd.get('cost'), price: +fd.get('price')
     });
     closeModal(); await saveAll();
@@ -1240,30 +1030,12 @@ window.newPhone = () => {
   openModal(`
     ${modalHeader('Nuevo equipo')}
     <form id="fPhone" class="form-grid">
-      <div class="field full">
-        <label>Modelo y capacidad</label>
-        <input class="input" name="model" required placeholder="iPhone 13 128GB" autofocus>
-      </div>
-      <div class="field full">
-        <label>IMEI / Serial</label>
-        <input class="input" name="imei" required>
-      </div>
-      <div class="field">
-        <label>Batería %</label>
-        <input class="input" name="bat" type="number" min="0" max="100" required placeholder="100">
-      </div>
-      <div class="field">
-        <label>Notas</label>
-        <input class="input" name="notes" placeholder="Opcional">
-      </div>
-      <div class="field">
-        <label>Costo (USD)</label>
-        <input class="input" name="cost" type="number" step="0.01" required placeholder="0.00">
-      </div>
-      <div class="field">
-        <label>Precio venta (USD)</label>
-        <input class="input" name="price" type="number" step="0.01" required placeholder="0.00">
-      </div>
+      <div class="field full"><label>Modelo y capacidad</label><input class="input" name="model" required placeholder="iPhone 13 128GB" autofocus></div>
+      <div class="field full"><label>IMEI / Serial</label><input class="input" name="imei" required></div>
+      <div class="field"><label>Batería %</label><input class="input" name="bat" type="number" min="0" max="100" required placeholder="100"></div>
+      <div class="field"><label>Notas</label><input class="input" name="notes" placeholder="Opcional"></div>
+      <div class="field"><label>Costo (USD)</label><input class="input" name="cost" type="number" step="0.01" required placeholder="0.00"></div>
+      <div class="field"><label>Precio venta (USD)</label><input class="input" name="price" type="number" step="0.01" required placeholder="0.00"></div>
       <div class="modal-foot full">
         <button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button>
         <button type="submit" class="btn primary">Guardar equipo</button>
@@ -1274,8 +1046,7 @@ window.newPhone = () => {
     e.preventDefault();
     const fd = new FormData(e.target);
     const item = {
-      id: uid(),
-      model: fd.get('model'), imei: fd.get('imei'),
+      id: uid(), model: fd.get('model'), imei: fd.get('imei'),
       bat: fd.get('bat'), notes: fd.get('notes'),
       cost: +fd.get('cost'), price: +fd.get('price'),
       date: new Date().toISOString()
@@ -1288,7 +1059,7 @@ window.newPhone = () => {
 };
 
 /* ============================================================
-   FORM · ACC (NUEVO / EDITAR)
+   FORM · ACC
 ============================================================ */
 window.editAcc = id => {
   const a = acc.find(x => x.id === id);
@@ -1296,22 +1067,10 @@ window.editAcc = id => {
   openModal(`
     ${modalHeader('Editar accesorio')}
     <form id="fAcc" class="form-grid">
-      <div class="field full">
-        <label>Nombre</label>
-        <input class="input" name="name" required value="${esc(a.name)}">
-      </div>
-      <div class="field full">
-        <label>Cantidad en stock</label>
-        <input class="input" name="qty" type="number" min="0" required value="${esc(a.qty)}">
-      </div>
-      <div class="field">
-        <label>Costo unitario (USD)</label>
-        <input class="input" name="cost" type="number" step="0.01" required value="${esc(a.cost)}">
-      </div>
-      <div class="field">
-        <label>Precio venta (USD)</label>
-        <input class="input" name="price" type="number" step="0.01" required value="${esc(a.price)}">
-      </div>
+      <div class="field full"><label>Nombre</label><input class="input" name="name" required value="${esc(a.name)}"></div>
+      <div class="field full"><label>Cantidad en stock</label><input class="input" name="qty" type="number" min="0" required value="${esc(a.qty)}"></div>
+      <div class="field"><label>Costo unitario (USD)</label><input class="input" name="cost" type="number" step="0.01" required value="${esc(a.cost)}"></div>
+      <div class="field"><label>Precio venta (USD)</label><input class="input" name="price" type="number" step="0.01" required value="${esc(a.price)}"></div>
       <div class="modal-foot full">
         <button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button>
         <button type="submit" class="btn primary">Guardar cambios</button>
@@ -1322,10 +1081,7 @@ window.editAcc = id => {
     e.preventDefault();
     pushUndo('Editar accesorio · ' + a.name);
     const fd = new FormData(e.target);
-    Object.assign(a, {
-      name: fd.get('name'), qty: +fd.get('qty'),
-      cost: +fd.get('cost'), price: +fd.get('price')
-    });
+    Object.assign(a, { name: fd.get('name'), qty: +fd.get('qty'), cost: +fd.get('cost'), price: +fd.get('price') });
     closeModal(); await saveAll();
     showToast('Accesorio actualizado', true);
   };
@@ -1335,22 +1091,10 @@ window.newAcc = () => {
   openModal(`
     ${modalHeader('Nuevo accesorio')}
     <form id="fAcc" class="form-grid">
-      <div class="field full">
-        <label>Nombre</label>
-        <input class="input" name="name" required placeholder="Cargador 20W" autofocus>
-      </div>
-      <div class="field full">
-        <label>Stock inicial</label>
-        <input class="input" name="qty" type="number" min="0" required placeholder="10">
-      </div>
-      <div class="field">
-        <label>Costo unitario (USD)</label>
-        <input class="input" name="cost" type="number" step="0.01" required placeholder="0.00">
-      </div>
-      <div class="field">
-        <label>Precio venta (USD)</label>
-        <input class="input" name="price" type="number" step="0.01" required placeholder="0.00">
-      </div>
+      <div class="field full"><label>Nombre</label><input class="input" name="name" required placeholder="Cargador 20W" autofocus></div>
+      <div class="field full"><label>Stock inicial</label><input class="input" name="qty" type="number" min="0" required placeholder="10"></div>
+      <div class="field"><label>Costo unitario (USD)</label><input class="input" name="cost" type="number" step="0.01" required placeholder="0.00"></div>
+      <div class="field"><label>Precio venta (USD)</label><input class="input" name="price" type="number" step="0.01" required placeholder="0.00"></div>
       <div class="modal-foot full">
         <button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button>
         <button type="submit" class="btn primary">Guardar accesorio</button>
@@ -1360,10 +1104,7 @@ window.newAcc = () => {
   $('#fAcc').onsubmit = async e => {
     e.preventDefault();
     const fd = new FormData(e.target);
-    const item = {
-      id: uid(), name: fd.get('name'),
-      qty: +fd.get('qty'), cost: +fd.get('cost'), price: +fd.get('price')
-    };
+    const item = { id: uid(), name: fd.get('name'), qty: +fd.get('qty'), cost: +fd.get('cost'), price: +fd.get('price') };
     pushUndo('Agregar accesorio · ' + item.name);
     acc.push(item);
     closeModal(); await saveAll();
@@ -1388,20 +1129,10 @@ window.prepSell = (type, id) => {
       ${type === 'phone' ? `<div style="font-size:12px;color:var(--muted);margin-top:2px">IMEI: ${esc(item.imei)}</div>` : ''}
     </div>
     <form id="fSell" class="form-grid">
-      <div class="field full">
-        <label>Nombre del cliente</label>
-        <input class="input" name="client" required placeholder="Juan Pérez" autofocus>
-      </div>
-      <div class="field full">
-        <label>WhatsApp del cliente</label>
-        <input class="input" name="phone" type="tel" required placeholder="58412…">
-      </div>
-      <div class="field">
-        <label>Precio final (USD)</label>
-        <input class="input" name="price" type="number" step="0.01" required value="${esc(item.price)}">
-      </div>
-      <div class="field">
-        <label>Método de pago</label>
+      <div class="field full"><label>Nombre del cliente</label><input class="input" name="client" required placeholder="Juan Pérez" autofocus></div>
+      <div class="field full"><label>WhatsApp del cliente</label><input class="input" name="phone" type="tel" required placeholder="58412…"></div>
+      <div class="field"><label>Precio final (USD)</label><input class="input" name="price" type="number" step="0.01" required value="${esc(item.price)}"></div>
+      <div class="field"><label>Método de pago</label>
         <select class="input" name="account">
           <option value="usd">Efectivo USD</option>
           <option value="cop">Efectivo COP</option>
@@ -1424,36 +1155,25 @@ window.prepSell = (type, id) => {
     const price  = +fd.get('price');
     const account = fd.get('account');
 
-    // SNAPSHOT ANTES DE MUTAR
     pushUndo('Venta · ' + (item.model || item.name));
 
     let saleItemStr = '';
     if (type === 'phone'){
-      hist.push({
-        id: uid(), type:'phone', name: item.model, imei: item.imei,
-        client, cost: item.cost, sell: price,
-        account, date: new Date().toISOString()
-      });
+      hist.push({ id: uid(), type:'phone', name: item.model, imei: item.imei, client, cost: item.cost, sell: price, account, date: new Date().toISOString() });
       saleItemStr = `📱 *${item.model}*\nIMEI: ${item.imei}`;
       phones = phones.filter(x => x.id !== item.id);
     } else {
-      hist.push({
-        id: uid(), type:'acc', name: item.name, imei:'N/A',
-        client, cost: item.cost, sell: price,
-        account, date: new Date().toISOString()
-      });
+      hist.push({ id: uid(), type:'acc', name: item.name, imei:'N/A', client, cost: item.cost, sell: price, account, date: new Date().toISOString() });
       saleItemStr = `🔌 *${item.name}*`;
       item.qty -= 1;
     }
 
-    // Sumar a caja
     if (account === 'cop') wallet.cop += price * wallet.rate;
     else wallet[account] += price;
 
     closeModal(); await saveAll();
     showToast('Venta registrada · ' + (item.model || item.name), true);
 
-    // WhatsApp
     const msg = (settings.waTemplate || '')
       .replace(/{cliente}/g, client)
       .replace(/{producto}/g, saleItemStr)
@@ -1464,25 +1184,20 @@ window.prepSell = (type, id) => {
 };
 
 /* ============================================================
-   FORM · WALLET MOVEMENT
+   FORM · WALLET MOVE
 ============================================================ */
 window.newWalletMove = () => {
   openModal(`
     ${modalHeader('Movimiento de caja')}
     <form id="fWallet" class="form-grid">
-      <div class="field full">
-        <label>Tipo de movimiento</label>
+      <div class="field full"><label>Tipo de movimiento</label>
         <select class="input" name="type">
           <option value="add">Ingreso extra</option>
           <option value="sub">Gasto operativo</option>
         </select>
       </div>
-      <div class="field full">
-        <label>Descripción</label>
-        <input class="input" name="desc" required placeholder="Pasajes, publicidad, etc." autofocus>
-      </div>
-      <div class="field">
-        <label>Cuenta</label>
+      <div class="field full"><label>Descripción</label><input class="input" name="desc" required placeholder="Pasajes, publicidad, etc." autofocus></div>
+      <div class="field"><label>Cuenta</label>
         <select class="input" name="account">
           <option value="usd">Efectivo USD</option>
           <option value="cop">Efectivo COP</option>
@@ -1490,10 +1205,7 @@ window.newWalletMove = () => {
           <option value="zinli">Zinli</option>
         </select>
       </div>
-      <div class="field">
-        <label>Monto</label>
-        <input class="input" name="amount" type="number" step="0.01" required placeholder="0.00">
-      </div>
+      <div class="field"><label>Monto</label><input class="input" name="amount" type="number" step="0.01" required placeholder="0.00"></div>
       <div class="modal-foot full">
         <button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button>
         <button type="submit" class="btn primary">Registrar</button>
@@ -1512,11 +1224,7 @@ window.newWalletMove = () => {
     if (type === 'sub') wallet[account] -= amount;
     else                wallet[account] += amount;
 
-    movs.push({
-      id: uid(), type: type === 'sub' ? 'gasto' : 'ingreso',
-      desc, amt: amount, acc: account,
-      date: new Date().toISOString()
-    });
+    movs.push({ id: uid(), type: type === 'sub' ? 'gasto' : 'ingreso', desc, amt: amount, acc: account, date: new Date().toISOString() });
 
     closeModal(); await saveAll();
     showToast('Movimiento registrado', true);
@@ -1524,7 +1232,135 @@ window.newWalletMove = () => {
 };
 
 /* ============================================================
-   ACCIONES · STOCK / DELETE / UNDO
+   FORM · TRANSFER  ⭐ NUEVO
+============================================================ */
+function accountOptions(selected, exclude){
+  return Object.entries(ACCOUNTS).map(([k,v]) =>
+    `<option value="${k}" ${k===selected?'selected':''} ${k===exclude?'disabled':''}>${v.label}</option>`
+  ).join('');
+}
+
+/* Calcula el monto convertido entre dos cuentas */
+function calcConvert(from, to, amount){
+  const isDollar = k => ACCOUNTS[k]?.dollar;
+  if (!amount || amount <= 0) return { out: 0, rateLabel: '' };
+  if (from === to) return { out: amount, rateLabel: 'Mismo tipo de cuenta' };
+  // Mismo tipo "dólar": USD, USDT, Zinli → 1:1
+  if (isDollar(from) && isDollar(to)) {
+    return { out: amount, rateLabel: `1 ${ACCOUNTS[from].cur} = 1 ${ACCOUNTS[to].cur}` };
+  }
+  // Dólar → COP
+  if (isDollar(from) && to === 'cop') {
+    return { out: amount * wallet.rate, rateLabel: `× ${fMoney(wallet.rate, '$')} COP/USD` };
+  }
+  // COP → Dólar
+  if (from === 'cop' && isDollar(to)) {
+    return { out: amount / wallet.rate, rateLabel: `÷ ${fMoney(wallet.rate, '$')} COP/USD` };
+  }
+  return { out: amount, rateLabel: '' };
+}
+
+window.newTransfer = (fromPreset, toPreset) => {
+  const from = fromPreset || 'usd';
+  const to   = toPreset   || 'usdt';
+
+  openModal(`
+    ${modalHeader('Transferir entre cuentas')}
+    <form id="fTransfer">
+      <div class="swap-wrap">
+        <div class="field" style="margin-bottom:0">
+          <label>Desde</label>
+          <select class="input" name="from" id="fromAcc">${accountOptions(from)}</select>
+        </div>
+        <button type="button" class="swap-mid" id="swapBtn" title="Intercambiar">${icon('swapH',16,2.2)}</button>
+        <div class="field" style="margin-bottom:0">
+          <label>Hacia</label>
+          <select class="input" name="to" id="toAcc">${accountOptions(to)}</select>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:14px">
+        <label>Monto a transferir</label>
+        <input class="input" name="amount" id="tAmount" type="number" step="0.01" min="0" required placeholder="0.00" autofocus>
+        <div id="availInfo" style="font-size:11.5px;color:var(--muted);margin-top:6px"></div>
+      </div>
+
+      <div class="convert-box" id="convertBox">
+        <div class="lbl">Recibirás</div>
+        <div class="out" id="convOut">$0.00</div>
+        <div class="rate" id="convRate">—</div>
+      </div>
+
+      <div class="modal-foot">
+        <button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button>
+        <button type="submit" class="btn primary">${icon('swap',15)} Transferir</button>
+      </div>
+    </form>
+  `);
+
+  const refresh = () => {
+    const fromK = $('#fromAcc').value;
+    const toK   = $('#toAcc').value;
+    const amt   = +$('#tAmount').value || 0;
+    const r = calcConvert(fromK, toK, amt);
+    const toSym = ACCOUNTS[toK].sym;
+    const outTxt = (toK === 'cop' ? fMoney(r.out, '$') + ' COP' : fMoney(r.out, toSym));
+    $('#convOut').textContent = outTxt;
+    $('#convRate').textContent = r.rateLabel || '—';
+    const avail = wallet[fromK] || 0;
+    const suf = fromK === 'cop' ? ' COP' : ' USD';
+    $('#availInfo').innerHTML = `Disponible: <b style="color:var(--text)">${fMoney(avail, '$')}${suf}</b>` +
+      (amt > avail ? ` · <span style="color:var(--red)">Saldo insuficiente</span>` : '');
+  };
+
+  $('#fromAcc').onchange = refresh;
+  $('#toAcc').onchange   = refresh;
+  $('#tAmount').oninput  = refresh;
+  $('#swapBtn').onclick = () => {
+    const a = $('#fromAcc').value;
+    const b = $('#toAcc').value;
+    $('#fromAcc').value = b;
+    $('#toAcc').value   = a;
+    refresh();
+  };
+  refresh();
+
+  $('#fTransfer').onsubmit = async e => {
+    e.preventDefault();
+    const fromK = $('#fromAcc').value;
+    const toK   = $('#toAcc').value;
+    const amt   = +$('#tAmount').value;
+
+    if (fromK === toK) { showToast('Elige cuentas diferentes'); return; }
+    if (!amt || amt <= 0) { showToast('Monto inválido'); return; }
+    if (amt > (wallet[fromK] || 0)) { showToast('Saldo insuficiente en ' + ACCOUNTS[fromK].label); return; }
+
+    const r = calcConvert(fromK, toK, amt);
+
+    pushUndo(`Transferir ${ACCOUNTS[fromK].label} → ${ACCOUNTS[toK].label}`);
+    wallet[fromK] -= amt;
+    wallet[toK]   += r.out;
+
+    movs.push({
+      id: uid(),
+      type: 'transfer',
+      from: fromK,
+      to: toK,
+      amt: amt,        // lo que salió
+      amtIn: r.out,    // lo que entró
+      desc: `${ACCOUNTS[fromK].label} → ${ACCOUNTS[toK].label}`,
+      acc: fromK,
+      date: new Date().toISOString()
+    });
+
+    closeModal(); await saveAll();
+    const outTxt = toK === 'cop' ? fMoney(r.out, '$') + ' COP' : fMoney(r.out);
+    showToast(`Transferido · ${fMoney(amt)} → ${outTxt}`, true);
+  };
+};
+
+/* ============================================================
+   STOCK / DELETE / UNDO
 ============================================================ */
 window.modStock = async (id, delta) => {
   const a = acc.find(x => x.id === id);
@@ -1533,7 +1369,6 @@ window.modStock = async (id, delta) => {
   pushUndo('Stock · ' + a.name);
   a.qty += delta;
   await saveAll();
-  // Silencioso: no toast por cada click
   if (undoStack.length > 30) undoStack.shift();
 };
 
@@ -1567,12 +1402,7 @@ window.undoSale = id => {
       hist = hist.filter(h => h.id !== id);
 
       if (sale.type === 'phone'){
-        phones.push({
-          id: uid(), model: sale.name, imei: sale.imei,
-          bat: 100, notes: 'Restaurado de venta anulada',
-          cost: sale.cost, price: sale.sell,
-          date: new Date().toISOString()
-        });
+        phones.push({ id: uid(), model: sale.name, imei: sale.imei, bat: 100, notes: 'Restaurado de venta anulada', cost: sale.cost, price: sale.sell, date: new Date().toISOString() });
       } else {
         const a = acc.find(x => x.name === sale.name);
         if (a) a.qty += 1;
@@ -1590,14 +1420,23 @@ window.undoSale = id => {
 window.undoMove = id => {
   const m = movs.find(x => x.id === id);
   if (!m) return;
+  const isTransfer = m.type === 'transfer';
   confirmDialog({
-    title: '¿Eliminar este movimiento?',
-    text: 'Se revertirá el cambio en la cuenta correspondiente.',
+    title: isTransfer ? '¿Revertir esta transferencia?' : '¿Eliminar este movimiento?',
+    text: isTransfer
+      ? `Se devolverá ${fMoney(m.amt)} a ${ACCOUNTS[m.from].label} y se restará de ${ACCOUNTS[m.to].label}.`
+      : 'Se revertirá el cambio en la cuenta correspondiente.',
     confirmLabel: 'Sí, revertir',
     onConfirm: async () => {
-      pushUndo('Revertir ' + (m.type === 'gasto' ? 'gasto' : 'ingreso') + ' · ' + m.desc);
-      if (m.type === 'gasto') wallet[m.acc] += m.amt;
-      else                    wallet[m.acc] -= m.amt;
+      pushUndo(isTransfer ? 'Revertir transferencia' : 'Revertir ' + (m.type === 'gasto' ? 'gasto' : 'ingreso') + ' · ' + m.desc);
+      if (isTransfer){
+        wallet[m.from] += m.amt;
+        wallet[m.to]   -= m.amtIn;
+      } else if (m.type === 'gasto'){
+        wallet[m.acc] += m.amt;
+      } else {
+        wallet[m.acc] -= m.amt;
+      }
       movs = movs.filter(x => x.id !== id);
       await saveAll();
       showToast('Movimiento revertido', true);
@@ -1610,9 +1449,7 @@ window.resendReceipt = id => {
   if (!h) return;
   const phone = prompt('Número de WhatsApp (con código de país):', '');
   if (!phone) return;
-  const itemStr = h.type === 'phone'
-    ? `📱 *${h.name}*\nIMEI: ${h.imei}`
-    : `🔌 *${h.name}*`;
+  const itemStr = h.type === 'phone' ? `📱 *${h.name}*\nIMEI: ${h.imei}` : `🔌 *${h.name}*`;
   const msg = (settings.waTemplate || '')
     .replace(/{cliente}/g, h.client || '')
     .replace(/{producto}/g, itemStr)
@@ -1631,51 +1468,29 @@ window.handleFab = () => {
 };
 
 /* ============================================================
-   AJUSTES · ACCIONES
+   AJUSTES
 ============================================================ */
 window.openSettings = () => switchTab('settings');
 
 window.toggleTheme = async () => {
   settings.theme = settings.theme === 'dark' ? 'light' : 'dark';
-  applyTheme();
-  await saveAll();
+  applyTheme(); await saveAll();
 };
-
 window.editBusinessName = async () => {
   const name = prompt('Nombre del negocio:', settings.businessName);
-  if (name && name.trim()){
-    settings.businessName = name.trim();
-    await saveAll();
-    showToast('Nombre actualizado');
-  }
+  if (name && name.trim()){ settings.businessName = name.trim(); await saveAll(); showToast('Nombre actualizado'); }
 };
-
 window.editLowStock = async () => {
   const n = prompt('Avisar cuando el stock sea menor o igual a:', settings.lowStock);
-  if (n && !isNaN(+n)){
-    settings.lowStock = Math.max(1, parseInt(n));
-    await saveAll();
-    showToast('Alerta ajustada a ' + settings.lowStock);
-  }
+  if (n && !isNaN(+n)){ settings.lowStock = Math.max(1, parseInt(n)); await saveAll(); showToast('Alerta ajustada a ' + settings.lowStock); }
 };
-
 window.editWaTemplate = async () => {
-  const t = prompt('Plantilla de WhatsApp. Variables: {cliente} {producto} {precio} {fecha}',
-                   settings.waTemplate);
-  if (t && t.trim()){
-    settings.waTemplate = t;
-    await saveAll();
-    showToast('Plantilla actualizada');
-  }
+  const t = prompt('Plantilla WhatsApp. Variables: {cliente} {producto} {precio} {fecha}', settings.waTemplate);
+  if (t && t.trim()){ settings.waTemplate = t; await saveAll(); showToast('Plantilla actualizada'); }
 };
-
 window.updateRate = async () => {
   const r = prompt('Tasa COP por 1 USD:', wallet.rate);
-  if (r && +r > 0){
-    wallet.rate = +r;
-    await saveAll();
-    showToast('Tasa actualizada');
-  }
+  if (r && +r > 0){ wallet.rate = +r; await saveAll(); showToast('Tasa actualizada'); }
 };
 
 window.exportBackup = () => {
@@ -1683,23 +1498,17 @@ window.exportBackup = () => {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
   const url  = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = `respaldo-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
+  a.href = url; a.download = `respaldo-${new Date().toISOString().slice(0,10)}.json`;
+  a.click(); URL.revokeObjectURL(url);
   showToast('Respaldo descargado');
 };
-
 window.importBackup = () => {
   const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.json,application/json';
+  input.type = 'file'; input.accept = '.json,application/json';
   input.onchange = async e => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const file = e.target.files[0]; if (!file) return;
     try{
-      const text = await file.text();
-      const data = JSON.parse(text);
+      const data = JSON.parse(await file.text());
       pushUndo('Restaurar respaldo');
       if (Array.isArray(data.phones)) phones = data.phones;
       if (Array.isArray(data.acc))    acc = data.acc;
@@ -1707,16 +1516,12 @@ window.importBackup = () => {
       if (Array.isArray(data.movs))   movs = data.movs;
       if (data.wallet)   wallet = Object.assign(wallet, data.wallet);
       if (data.settings) settings = Object.assign(settings, data.settings);
-      applyTheme();
-      await saveAll();
+      applyTheme(); await saveAll();
       showToast('Respaldo restaurado correctamente', true);
-    } catch(err){
-      alert('El archivo no es un respaldo válido.');
-    }
+    } catch(err){ alert('El archivo no es un respaldo válido.'); }
   };
   input.click();
 };
-
 window.clearAllData = () => {
   confirmDialog({
     title: '¿Borrar TODOS los datos?',
@@ -1733,7 +1538,7 @@ window.clearAllData = () => {
 };
 
 /* ============================================================
-   CSV EXPORT
+   CSV
 ============================================================ */
 window.exportToCSV = () => {
   let csv = 'Cliente,Producto,IMEI,Costo (USD),Venta (USD),Ganancia (USD),Cuenta,Fecha\n';
@@ -1745,29 +1550,23 @@ window.exportToCSV = () => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = `ventas-${new Date().toISOString().slice(0,10)}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
+  a.click(); URL.revokeObjectURL(url);
   showToast('Reporte CSV descargado');
 };
 
 /* ============================================================
-   ATAJOS DE TECLADO
+   ATAJOS
 ============================================================ */
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeModal();
-  // Ctrl/Cmd + Z = deshacer
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey){
-    e.preventDefault();
-    undoLast();
+    e.preventDefault(); undoLast();
   }
-  // "/" para buscar
   if (e.key === '/' && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){
     e.preventDefault();
-    if (currentTab === 'phones' || currentTab === 'acc'){
-      $('#searchInput')?.focus();
-    }
+    if (currentTab === 'phones' || currentTab === 'acc') $('#searchInput')?.focus();
   }
 });
 </script>
 </body>
-</html>
+  </html>
