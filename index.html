@@ -10,7 +10,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ============ TOKENS ============ */
 :root{
   --bg:#F5F5F7; --surface:#FFFFFF; --surface-2:#FAFAFB; --elevated:#FFFFFF;
   --text:#1D1D1F; --muted:#86868B; --faint:#A1A1A6;
@@ -19,11 +18,10 @@
   --green:#34C759; --green-bg:#E8F8EC;
   --red:#FF3B30;   --red-bg:#FFECEB;
   --amber:#FF9500; --amber-bg:#FFF4E5;
+  --purple:#AF52DE; --purple-bg:#F5EDFB;
   --ring:rgba(0,113,227,.15);
-  --shadow-sm:0 1px 2px rgba(16,24,40,.04);
   --shadow:0 1px 3px rgba(16,24,40,.06), 0 8px 24px rgba(16,24,40,.06);
   --radius:14px; --radius-sm:10px; --radius-lg:20px;
-  /* Logo */
   --logo-bg-1:#0071E3; --logo-bg-2:#0058B8;
 }
 [data-theme="dark"]{
@@ -34,22 +32,14 @@
   --green:#30D158; --green-bg:rgba(48,209,88,.14);
   --red:#FF453A;   --red-bg:rgba(255,69,58,.14);
   --amber:#FF9F0A; --amber-bg:rgba(255,159,10,.14);
+  --purple:#BF5AF2; --purple-bg:rgba(191,90,242,.14);
   --ring:rgba(10,132,255,.25);
-  --shadow-sm:0 1px 2px rgba(0,0,0,.5);
   --shadow:0 1px 3px rgba(0,0,0,.6), 0 8px 24px rgba(0,0,0,.4);
   --logo-bg-1:#0A84FF; --logo-bg-2:#0066CC;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{
-  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
-  background:var(--bg); color:var(--text);
-  font-size:14px; line-height:1.45;
-  -webkit-font-smoothing:antialiased;
-  padding-bottom:calc(90px + env(safe-area-inset-bottom));
-  transition:background .25s, color .25s;
-  overscroll-behavior-y:none;
-}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased;padding-bottom:calc(90px + env(safe-area-inset-bottom));transition:background .25s, color .25s;overscroll-behavior-y:none}
 button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
 button{cursor:pointer;border:none;background:none}
 input,select,textarea{outline:none}
@@ -57,20 +47,8 @@ input,select,textarea{outline:none}
 ::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:8px}
 
 /* ============ LOGO N ============ */
-.logo-N{
-  display:grid;place-items:center;
-  background:linear-gradient(135deg, var(--logo-bg-1) 0%, var(--logo-bg-2) 100%);
-  color:#fff;
-  box-shadow:0 4px 14px rgba(0,113,227,.28),
-             inset 0 1px 0 rgba(255,255,255,.18);
-  position:relative;
-  overflow:hidden;
-}
-.logo-N::after{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(circle at 30% 20%, rgba(255,255,255,.22), transparent 60%);
-  pointer-events:none;
-}
+.logo-N{display:grid;place-items:center;background:linear-gradient(135deg,var(--logo-bg-1) 0%,var(--logo-bg-2) 100%);color:#fff;box-shadow:0 4px 14px rgba(0,113,227,.28),inset 0 1px 0 rgba(255,255,255,.18);position:relative;overflow:hidden}
+.logo-N::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 20%, rgba(255,255,255,.22), transparent 60%);pointer-events:none}
 .logo-N svg{position:relative;z-index:1}
 .logo-lg{width:64px;height:64px;border-radius:19px;margin:0 auto 20px}
 .logo-sm{width:36px;height:36px;border-radius:11px;flex:0 0 auto}
@@ -80,14 +58,12 @@ input,select,textarea{outline:none}
 .login-box{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:36px 26px;box-shadow:var(--shadow)}
 .login-box h1{font-size:22px;font-weight:600;text-align:center;letter-spacing:-.03em;margin-bottom:6px}
 .login-box p.sub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:26px}
-
 .field{margin-bottom:12px}
 .field label{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
 .input{width:100%;height:44px;padding:0 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:15px;transition:border-color .15s, box-shadow .15s}
 .input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--ring)}
 .input::placeholder{color:var(--faint)}
 select.input{padding-right:36px;appearance:none;background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2386868B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
-
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;letter-spacing:-.01em;transition:opacity .15s, transform .1s, background .15s, border-color .15s}
 .btn:active{transform:scale(.98)}
 .btn.primary{background:var(--accent);color:var(--accent-text)}
@@ -98,7 +74,6 @@ select.input{padding-right:36px;appearance:none;background-image:url("data:image
 .btn.ghost:hover{background:var(--bg)}
 .btn.block{width:100%}
 .btn.sm{height:32px;padding:0 12px;font-size:13px;border-radius:8px}
-
 .login-foot{text-align:center;margin-top:16px;font-size:13px}
 .link{color:var(--accent);cursor:pointer;font-weight:500}
 .link:hover{text-decoration:underline}
@@ -114,12 +89,10 @@ header{position:sticky;top:0;z-index:30;background:color-mix(in srgb, var(--bg) 
 .brand-info span{font-size:11px;color:var(--muted)}
 .iconbtn{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:var(--muted);border:1px solid transparent;transition:.15s}
 .iconbtn:hover{background:var(--surface);color:var(--text);border-color:var(--border)}
-
 .search-wrap{position:relative;display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);height:38px;padding:0 12px;gap:8px;color:var(--faint)}
 .search-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--ring)}
 .search-wrap input{flex:1;min-width:0;border:0;background:none;height:100%;font-size:14px;color:var(--text)}
 .search-wrap input::placeholder{color:var(--faint)}
-
 .dash{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
 .dash-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;transition:border-color .15s}
 .dash-card:hover{border-color:var(--border-2)}
@@ -130,16 +103,13 @@ header{position:sticky;top:0;z-index:30;background:color-mix(in srgb, var(--bg) 
 .val.neg{color:var(--red)}
 .val.acc{color:var(--accent)}
 
-/* ============ MAIN ============ */
 main{padding:18px;max-width:760px;margin:0 auto}
 .view{display:none;animation:fade .22s ease}
 .view.active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;transition:border-color .15s}
 .card:hover{border-color:var(--border-2)}
 .card.warn{border-left:3px solid var(--red)}
-
 .row{display:flex;gap:12px;align-items:flex-start}
 .thumb{width:44px;height:44px;flex:0 0 auto;border-radius:12px;background:var(--surface-2);border:1px solid var(--border);display:grid;place-items:center;color:var(--muted)}
 .info{flex:1;min-width:0}
@@ -148,14 +118,12 @@ main{padding:18px;max-width:760px;margin:0 auto}
 .meta-row{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap}
 .meta-row span{display:flex;flex-direction:column;font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.03em;font-weight:600}
 .meta-row span b{font-size:12.5px;color:var(--text);font-weight:600;text-transform:none;letter-spacing:0;margin-top:1px}
-
 .badge{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:20px;background:var(--green-bg);color:var(--green);white-space:nowrap}
 .badge.warn{background:var(--amber-bg);color:var(--amber)}
 .badge.neutral{background:var(--surface-2);color:var(--muted)}
-
+.badge.purple{background:var(--purple-bg);color:var(--purple)}
 .actions{display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
 .actions .btn{flex:1;height:36px;font-size:13px}
-
 .stock{display:flex;align-items:center;gap:0;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:2px}
 .stock button{width:26px;height:26px;border-radius:6px;color:var(--muted);display:grid;place-items:center;transition:.15s}
 .stock button:hover{background:var(--surface);color:var(--text)}
@@ -163,7 +131,7 @@ main{padding:18px;max-width:760px;margin:0 auto}
 
 /* ============ WALLET ============ */
 .wallet-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
-.wallet-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;position:relative;overflow:hidden}
+.wallet-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;position:relative;overflow:hidden;transition:border-color .15s}
 .wallet-card .cur{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 .wallet-card .amt{font-size:20px;font-weight:700;letter-spacing:-.03em;margin-top:6px;font-variant-numeric:tabular-nums}
 .wallet-card.total{grid-column:span 2;background:var(--surface-2)}
@@ -171,25 +139,39 @@ main{padding:18px;max-width:760px;margin:0 auto}
 .wallet-card.rate{cursor:pointer}
 .wallet-card.rate:hover{border-color:var(--accent)}
 
+/* Rates bar */
+.rates-bar{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;
+}
+.rate-pill{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:12px 14px;cursor:pointer;transition:.15s;position:relative;overflow:hidden;
+}
+.rate-pill:hover{border-color:var(--amber);background:var(--amber-bg)}
+.rate-pill.p2p:hover{border-color:var(--purple);background:var(--purple-bg)}
+.rate-pill .lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:flex;align-items:center;gap:5px}
+.rate-pill .val{font-size:17px;font-weight:700;letter-spacing:-.02em;margin-top:4px;font-variant-numeric:tabular-nums}
+.rate-pill .hint{font-size:10.5px;color:var(--faint);margin-top:2px}
+.rate-pill .edit-mini{
+  position:absolute;top:10px;right:10px;color:var(--faint);
+  opacity:.6;transition:opacity .15s;
+}
+.rate-pill:hover .edit-mini{opacity:1;color:var(--accent)}
+
 .wallet-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
 .wallet-actions .btn{height:44px}
 
-/* ============ HISTORY ITEM ============ */
 .h-item{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
 .h-item:last-child{border-bottom:none}
 .h-item .left{flex:1;min-width:0}
-.h-item .l1{font-size:13.5px;font-weight:600;margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.h-item .l1{font-size:13.5px;font-weight:600;margin-bottom:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .h-item .l2{font-size:11.5px;color:var(--muted)}
 .h-item .right{text-align:right;font-variant-numeric:tabular-nums}
 .h-item .amt{font-size:13.5px;font-weight:600}
 .h-item .prof{font-size:11px;color:var(--green);font-weight:600;margin-top:2px}
 
-.tag-swap{
-  display:inline-flex;align-items:center;gap:3px;
-  font-size:10px;font-weight:700;padding:2px 6px;
-  border-radius:5px;background:var(--accent);
-  color:#fff;letter-spacing:.02em;
-}
+.tag-swap{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;background:var(--accent);color:#fff;letter-spacing:.02em}
+.tag-p2p{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;background:var(--purple);color:#fff;letter-spacing:.02em}
 
 /* ============ BOTTOM NAV ============ */
 .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(5,1fr);background:color-mix(in srgb, var(--surface) 92%, transparent);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-top:1px solid var(--border);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
@@ -199,13 +181,11 @@ main{padding:18px;max-width:760px;margin:0 auto}
 .nav-item svg{transition:transform .15s}
 .nav-item.active svg{transform:translateY(-1px)}
 
-/* ============ FAB ============ */
 .fab{position:fixed;right:20px;bottom:calc(82px + env(safe-area-inset-bottom));width:52px;height:52px;border-radius:16px;background:var(--accent);color:var(--accent-text);box-shadow:0 8px 24px rgba(0,113,227,.35);display:grid;place-items:center;z-index:35;transition:transform .15s, box-shadow .15s}
 .fab:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,113,227,.45)}
 .fab:active{transform:scale(.95)}
 .fab.hide{display:none}
 
-/* ============ MODAL ============ */
 .modal{position:fixed;inset:0;z-index:100;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);animation:fade .2s ease}
 .modal.show{display:flex}
 .modal-content{width:100%;max-width:520px;background:var(--surface);border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:8px 20px calc(24px + env(safe-area-inset-bottom));max-height:92dvh;overflow-y:auto;animation:sheet .28s cubic-bezier(.2,.8,.3,1)}
@@ -215,46 +195,26 @@ main{padding:18px;max-width:760px;margin:0 auto}
 .modal-head h2{font-size:17px;font-weight:600;letter-spacing:-.02em}
 .modal-foot{display:flex;gap:8px;margin-top:18px}
 .modal-foot .btn{flex:1}
-
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .form-grid .full{grid-column:1/-1}
 @media(max-width:520px){.form-grid{grid-template-columns:1fr}}
 
-/* ============ SWAP VISUAL ============ */
-.swap-wrap{
-  display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:end;
-}
-.swap-mid{
-  display:grid;place-items:center;
-  width:38px;height:38px;border-radius:11px;
-  background:var(--surface-2);border:1px solid var(--border);
-  color:var(--muted);cursor:pointer;
-  transition:.15s;margin-bottom:1px;
-}
+.swap-wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:end}
+.swap-mid{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:var(--surface-2);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:.15s;margin-bottom:1px}
 .swap-mid:hover{background:var(--accent);color:#fff;border-color:transparent;transform:rotate(180deg)}
 
-.convert-box{
-  padding:14px;border-radius:12px;
-  background:linear-gradient(135deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 78%, #000) 100%);
-  color:#fff;margin:14px 0 4px;
-  position:relative;overflow:hidden;
-}
-.convert-box::after{
-  content:'';position:absolute;top:-40%;right:-30%;
-  width:180px;height:180px;border-radius:50%;
-  background:radial-gradient(circle, rgba(255,255,255,.14), transparent 70%);
-}
+.convert-box{padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--accent) 0%, color-mix(in srgb, var(--accent) 78%, #000) 100%);color:#fff;margin:14px 0 4px;position:relative;overflow:hidden}
+.convert-box.p2p{background:linear-gradient(135deg,var(--purple) 0%, color-mix(in srgb, var(--purple) 78%, #000) 100%)}
+.convert-box::after{content:'';position:absolute;top:-40%;right:-30%;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle, rgba(255,255,255,.14), transparent 70%)}
 .convert-box .lbl{font-size:11px;opacity:.75;font-weight:600;text-transform:uppercase;letter-spacing:.05em;position:relative}
 .convert-box .out{font-size:26px;font-weight:700;margin-top:6px;letter-spacing:-.03em;font-variant-numeric:tabular-nums;position:relative}
 .convert-box .rate{font-size:11.5px;opacity:.78;margin-top:6px;position:relative}
 
-/* ============ CONFIRM ============ */
 .confirm-box{text-align:center;padding:8px 0}
 .confirm-ic{width:52px;height:52px;border-radius:50%;background:var(--red-bg);color:var(--red);display:grid;place-items:center;margin:0 auto 14px}
 .confirm-box h3{font-size:16px;font-weight:600;margin-bottom:6px;letter-spacing:-.02em}
 .confirm-box p{font-size:13px;color:var(--muted);line-height:1.5}
 
-/* ============ TOAST ============ */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom));z-index:200;display:flex;flex-direction:column-reverse;gap:8px;width:max-content;max-width:calc(100vw - 24px);pointer-events:none}
 .toast{display:flex;align-items:center;gap:12px;padding:10px 12px 10px 16px;background:var(--text);color:var(--bg);border-radius:12px;font-size:13px;font-weight:500;box-shadow:0 10px 34px rgba(0,0,0,.25);opacity:0;transform:translateY(12px) scale(.96);transition:.25s cubic-bezier(.2,.8,.3,1);pointer-events:auto;max-width:100%}
 .toast.show{opacity:1;transform:translateY(0) scale(1)}
@@ -262,7 +222,6 @@ main{padding:18px;max-width:760px;margin:0 auto}
 .toast .undo{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:8px;background:rgba(255,255,255,.14);font-size:12.5px;font-weight:600;color:inherit;transition:background .15s}
 .toast .undo:hover{background:rgba(255,255,255,.24)}
 
-/* ============ SETTINGS ============ */
 .setting-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
 .setting-item:last-child{border-bottom:none}
 .setting-icon{width:34px;height:34px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);display:grid;place-items:center;color:var(--muted);flex:0 0 auto}
@@ -274,7 +233,6 @@ main{padding:18px;max-width:760px;margin:0 auto}
 .switch::after{content:'';position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .switch.on::after{transform:translateX(18px)}
 
-/* ============ MISC ============ */
 .empty{text-align:center;padding:54px 24px;color:var(--muted)}
 .empty-ic{width:56px;height:56px;border-radius:16px;background:var(--surface);border:1px solid var(--border);display:grid;place-items:center;margin:0 auto 14px;color:var(--faint)}
 .empty h3{font-size:14.5px;font-weight:600;color:var(--text);margin-bottom:4px}
@@ -292,20 +250,13 @@ main{padding:18px;max-width:760px;margin:0 auto}
 </head>
 <body>
 
-<!-- ============ LOGIN ============ -->
 <div id="loginScreen">
   <div class="login-box">
     <div class="logo-N logo-lg" id="loginLogo"></div>
     <h1>Mi Negocio Pro</h1>
     <p class="sub">Inicia sesión para gestionar tu inventario</p>
-    <div class="field">
-      <label for="emailInput">Correo electrónico</label>
-      <input type="email" id="emailInput" class="input" placeholder="tu@correo.com" autocomplete="email">
-    </div>
-    <div class="field">
-      <label for="passwordInput">Contraseña</label>
-      <input type="password" id="passwordInput" class="input" placeholder="••••••••" autocomplete="current-password">
-    </div>
+    <div class="field"><label for="emailInput">Correo electrónico</label><input type="email" id="emailInput" class="input" placeholder="tu@correo.com" autocomplete="email"></div>
+    <div class="field"><label for="passwordInput">Contraseña</label><input type="password" id="passwordInput" class="input" placeholder="••••••••" autocomplete="current-password"></div>
     <button class="btn primary block" onclick="login()" style="margin-top:6px">Entrar</button>
     <div class="error" id="loginError">Credenciales incorrectas. Verifica tus datos.</div>
     <p class="login-foot"><span class="link" onclick="resetPassword()">¿Olvidaste tu contraseña?</span></p>
@@ -320,7 +271,6 @@ main{padding:18px;max-width:760px;margin:0 auto}
 </div>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 
-<!-- ============ APP ============ -->
 <div id="mainApp" style="display:none">
   <header>
     <div class="header-row">
@@ -366,14 +316,9 @@ main{padding:18px;max-width:760px;margin:0 auto}
 <div class="toasts" id="toasts"></div>
 
 <script type="module">
-/* ============================================================
-   FIREBASE
-============================================================ */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut }
-  from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc }
-  from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB_t1uM7Pflwp10YdQ5lZY4O4kHpyOzoxk",
@@ -387,9 +332,7 @@ const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-/* ============================================================
-   ICONOS SVG
-============================================================ */
+/* ============ ICONOS ============ */
 const ICONS = {
   box:'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/>',
   phone:'<rect x="5" y="2" width="14" height="20" rx="3"/><line x1="10" y1="18" x2="14" y2="18"/>',
@@ -417,27 +360,20 @@ const ICONS = {
   smartphone:'<rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>',
   swap:'<path d="M7 4v16"/><path d="M3 8l4-4 4 4"/><path d="M17 20V4"/><path d="M21 16l-4 4-4-4"/>',
   swapH:'<path d="M4 7h16"/><path d="M8 3 4 7l4 4"/><path d="M20 17H4"/><path d="M16 21l4-4-4-4"/>',
-  arrowRight:'<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>'
+  zap:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>'
 };
 function icon(name, size = 20, sw = 1.9){
-  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]||''}</svg>`;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]||''}</svg>`;
 }
-
-/* ============ LOGO N MINIMALISTA ============ */
 function logoN(size = 20, sw = 2.6){
-  // N minimalista: trazo continuo con remates redondeados
-  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M7 19V5l10 14V5"/>
-  </svg>`;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"><path d="M7 19V5l10 14V5"/></svg>`;
 }
 
 /* ============================================================
-   ESTADO
+   ESTADO  (se agrega wallet.usdtZinli)
 ============================================================ */
 let phones = [], acc = [], hist = [], movs = [];
-let wallet = { usd:0, cop:0, usdt:0, zinli:0, rate:4000 };
+let wallet = { usd:0, cop:0, usdt:0, zinli:0, rate:4000, usdtZinli:1 };
 let settings = {
   businessName: 'Mi Negocio',
   theme: 'light',
@@ -450,22 +386,66 @@ let searchQ = '';
 let pendingSale = null;
 let undoStack = [];
 
-/* ============================================================
-   UTILS
-============================================================ */
+/* ============ UTILS ============ */
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const uid = () => Date.now() + Math.random().toString(36).slice(2,7);
 const fMoney = (n, sym = '$') => sym + (parseFloat(n)||0).toLocaleString('en-US', { maximumFractionDigits:2 });
+const fNum = n => (parseFloat(n)||0).toLocaleString('en-US', { maximumFractionDigits:4 });
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate = d => new Date(d).toLocaleDateString('es', { day:'2-digit', month:'short', year:'numeric' });
 
 const ACCOUNTS = {
-  usd:   { label:'Efectivo USD', sym:'$', cur:'USD',  dollar:true },
-  cop:   { label:'Efectivo COP', sym:'$', cur:'COP',  dollar:false },
-  usdt:  { label:'USDT',         sym:'$', cur:'USDT', dollar:true },
-  zinli: { label:'Zinli',        sym:'$', cur:'Zinli',dollar:true }
+  usd:   { label:'Efectivo USD', sym:'$', cur:'USD' },
+  cop:   { label:'Efectivo COP', sym:'$', cur:'COP' },
+  usdt:  { label:'USDT',         sym:'$', cur:'USDT' },
+  zinli: { label:'Zinli',        sym:'$', cur:'Zinli' }
 };
+
+/* ============================================================
+   CONVERSIÓN · base USD con tasas independientes
+   ------------------------------------------------------------
+   - USD ⇄ USDT:  1:1 (mismo tipo de cambio dólar)
+   - USD/USDT → COP: × wallet.rate
+   - USDT → Zinli:  × wallet.usdtZinli
+   - Zinli → USDT:  ÷ wallet.usdtZinli
+   - USD → Zinli:   × wallet.usdtZinli  (porque USD=USDT)
+   - Zinli → USD:   ÷ wallet.usdtZinli
+============================================================ */
+function usdValueOf(key){
+  const zinliPerUsdt = wallet.usdtZinli || 1;
+  const copPerUsd    = wallet.rate || 1;
+  switch(key){
+    case 'usd':   return 1;
+    case 'usdt':  return 1;
+    case 'zinli': return 1 / zinliPerUsdt;   // 1 Zinli = 1/usdtZinli USD
+    case 'cop':   return 1 / copPerUsd;      // 1 COP = 1/rate USD
+  }
+  return 1;
+}
+
+function calcConvert(from, to, amount){
+  if (!amount || amount <= 0) return { out: 0, rateLabel: '—', isP2P:false };
+  if (from === to) return { out: amount, rateLabel: 'Mismo tipo de cuenta', isP2P:false };
+
+  const pairRate = usdValueOf(from) / usdValueOf(to);
+  const out = amount * pairRate;
+  const isP2P = (from === 'usdt' && to === 'zinli') || (from === 'zinli' && to === 'usdt');
+
+  let rateLabel = '';
+  if (isP2P){
+    rateLabel = from === 'usdt'
+      ? `1 USDT = ${fNum(pairRate)} Zinli`
+      : `1 Zinli = ${fNum(pairRate)} USDT`;
+  } else if ((from !== 'cop') && to === 'cop'){
+    rateLabel = `× ${fMoney(wallet.rate, '$')} COP/USD`;
+  } else if (from === 'cop' && to !== 'cop'){
+    rateLabel = `÷ ${fMoney(wallet.rate, '$')} COP/USD`;
+  } else {
+    rateLabel = `1 ${ACCOUNTS[from].cur} = ${fNum(pairRate)} ${ACCOUNTS[to].cur}`;
+  }
+  return { out, rateLabel, isP2P };
+}
 
 function applyTheme(){
   document.documentElement.dataset.theme = settings.theme;
@@ -473,14 +453,9 @@ function applyTheme(){
     ?.setAttribute('content', settings.theme === 'dark' ? '#000000' : '#F5F5F7');
 }
 
-/* ============================================================
-   UNDO
-============================================================ */
+/* ============ UNDO ============ */
 function snapshot(){ return JSON.parse(JSON.stringify({ phones, acc, hist, movs, wallet })); }
-function pushUndo(label){
-  undoStack.push({ label, snapshot: snapshot(), at: new Date().toISOString() });
-  if (undoStack.length > 30) undoStack.shift();
-}
+function pushUndo(label){ undoStack.push({ label, snapshot: snapshot(), at: new Date().toISOString() }); if (undoStack.length > 30) undoStack.shift(); }
 async function undoLast(){
   const entry = undoStack.pop();
   if (!entry){ showToast('No hay cambios que deshacer'); return; }
@@ -490,33 +465,22 @@ async function undoLast(){
   showToast('Deshecho · ' + entry.label);
 }
 
-/* ============================================================
-   TOAST
-============================================================ */
+/* ============ TOAST ============ */
 let toastTimers = new WeakMap();
 function showToast(msg, undoable = false){
   const wrap = $('#toasts');
   const el = document.createElement('div');
   el.className = 'toast';
-  el.innerHTML = `<span class="msg">${esc(msg)}</span>` +
-    (undoable ? `<button class="undo">${icon('undo',14,2.1)} Deshacer</button>` : '');
+  el.innerHTML = `<span class="msg">${esc(msg)}</span>` + (undoable ? `<button class="undo">${icon('undo',14,2.1)} Deshacer</button>` : '');
   wrap.appendChild(el);
   requestAnimationFrame(() => el.classList.add('show'));
-  if (undoable){
-    el.querySelector('.undo').onclick = async () => { closeToast(el); await undoLast(); };
-  }
+  if (undoable) el.querySelector('.undo').onclick = async () => { closeToast(el); await undoLast(); };
   const t = setTimeout(() => closeToast(el), 6500);
   toastTimers.set(el, t);
 }
-function closeToast(el){
-  clearTimeout(toastTimers.get(el));
-  el.classList.remove('show');
-  setTimeout(() => el.remove(), 250);
-}
+function closeToast(el){ clearTimeout(toastTimers.get(el)); el.classList.remove('show'); setTimeout(() => el.remove(), 250); }
 
-/* ============================================================
-   AUTH
-============================================================ */
+/* ============ AUTH ============ */
 onAuthStateChanged(auth, async user => {
   if (user){
     userUID = user.uid;
@@ -539,14 +503,10 @@ window.logout = () => signOut(auth);
 window.resetPassword = () => {
   const e = prompt('Ingresa tu correo para recuperar contraseña:');
   if (!e) return;
-  sendPasswordResetEmail(auth, e)
-    .then(() => alert('Correo enviado. Revisa tu bandeja.'))
-    .catch(() => alert('No se pudo enviar el correo.'));
+  sendPasswordResetEmail(auth, e).then(() => alert('Correo enviado.')).catch(() => alert('Error al enviar.'));
 };
 
-/* ============================================================
-   DATA
-============================================================ */
+/* ============ DATA ============ */
 async function loadData(){
   $('#loader').style.display = 'grid';
   try{
@@ -557,7 +517,7 @@ async function loadData(){
       acc      = d.acc      || [];
       hist     = d.hist     || [];
       movs     = d.movs     || [];
-      wallet   = Object.assign({ usd:0, cop:0, usdt:0, zinli:0, rate:4000 }, d.wallet || {});
+      wallet   = Object.assign({ usd:0, cop:0, usdt:0, zinli:0, rate:4000, usdtZinli:1 }, d.wallet || {});
       settings = Object.assign(settings, d.settings || {});
     }
     applyTheme();
@@ -573,9 +533,7 @@ async function saveAll(){
   $('#loader').style.display = 'none';
 }
 
-/* ============================================================
-   BOOT UI
-============================================================ */
+/* ============ BOOT UI ============ */
 function bootUI(){
   $('#loginLogo').innerHTML = logoN(30, 2.4);
   $('#brandMark').innerHTML = logoN(20, 2.7);
@@ -591,9 +549,7 @@ function bootUI(){
   render();
 }
 
-/* ============================================================
-   NAV
-============================================================ */
+/* ============ NAV ============ */
 window.switchTab = (tab, ev) => {
   currentTab = tab;
   searchQ = '';
@@ -607,9 +563,7 @@ window.switchTab = (tab, ev) => {
   render();
 };
 
-/* ============================================================
-   RENDER
-============================================================ */
+/* ============ RENDER ============ */
 window.render = render;
 function render(){
   searchQ = ($('#searchInput')?.value || '').toLowerCase().trim();
@@ -625,43 +579,26 @@ function updateHeaderSub(){
   const map = {
     phones: `${phones.length} equipos en inventario`,
     acc: `${acc.length} tipos de accesorios`,
-    wallet: `Tasa: $1 = ${fMoney(wallet.rate, '$')} COP`,
+    wallet: `Tasa COP ${fMoney(wallet.rate, '$')} · USDT/Zinli ${fNum(wallet.usdtZinli)}`,
     history: `${hist.length} ventas registradas`,
     settings: 'Preferencias de la aplicación'
   };
   $('#headerSub').textContent = map[currentTab] || '';
 }
 
-/* ============================================================
-   VIEW · PHONES
-============================================================ */
+/* ============ PHONES ============ */
 function renderPhones(){
   let cost = 0, price = 0;
-  const items = phones.filter(p =>
-    !searchQ || (p.model || '').toLowerCase().includes(searchQ) || (p.imei || '').toLowerCase().includes(searchQ)
-  );
+  const items = phones.filter(p => !searchQ || (p.model || '').toLowerCase().includes(searchQ) || (p.imei || '').toLowerCase().includes(searchQ));
   items.forEach(p => { cost += +p.cost || 0; price += +p.price || 0; });
-
   $('#dashGrid').innerHTML = `
-    <div class="dash-card">
-      <div class="lbl">${icon('box',11)} Inversión</div>
-      <div class="val">${fMoney(cost)}</div>
-    </div>
-    <div class="dash-card">
-      <div class="lbl">${icon('chart',11)} Proyectado</div>
-      <div class="val acc">${fMoney(price)}</div>
-    </div>
-    <div class="dash-card">
-      <div class="lbl">${icon('percentage',11)} Ganancia</div>
-      <div class="val pos">+${fMoney(price - cost)}</div>
-    </div>`;
-
+    <div class="dash-card"><div class="lbl">${icon('box',11)} Inversión</div><div class="val">${fMoney(cost)}</div></div>
+    <div class="dash-card"><div class="lbl">${icon('chart',11)} Proyectado</div><div class="val acc">${fMoney(price)}</div></div>
+    <div class="dash-card"><div class="lbl">${icon('percentage',11)} Ganancia</div><div class="val pos">+${fMoney(price - cost)}</div></div>`;
   if (!items.length){
-    $('#view-phones').innerHTML = emptyState('phone', 'Sin equipos',
-      searchQ ? 'No se encontraron equipos con esa búsqueda.' : 'Presiona el botón + para agregar tu primer equipo.');
+    $('#view-phones').innerHTML = emptyState('phone', 'Sin equipos', searchQ ? 'No se encontraron equipos con esa búsqueda.' : 'Presiona el botón + para agregar tu primer equipo.');
     return;
   }
-
   $('#view-phones').innerHTML = items.map(p => {
     const margin = (+p.price || 0) - (+p.cost || 0);
     const lowBat = (+p.bat || 100) < 80;
@@ -685,33 +622,25 @@ function renderPhones(){
         </div>
         <div class="actions">
           <button class="btn green" onclick="prepSell('phone','${p.id}')">${icon('tag',15)} Vender</button>
-          <button class="btn ghost" onclick="editPhone('${p.id}')" title="Editar" style="flex:0 0 42px">${icon('edit',15)}</button>
-          <button class="btn ghost" onclick="confirmDelete('phone','${p.id}')" title="Eliminar" style="flex:0 0 42px">${icon('trash',15)}</button>
+          <button class="btn ghost" onclick="editPhone('${p.id}')" style="flex:0 0 42px">${icon('edit',15)}</button>
+          <button class="btn ghost" onclick="confirmDelete('phone','${p.id}')" style="flex:0 0 42px">${icon('trash',15)}</button>
         </div>
       </div>`;
   }).join('');
 }
 
-/* ============================================================
-   VIEW · ACC
-============================================================ */
+/* ============ ACC ============ */
 function renderAcc(){
   let inv = 0;
   const items = acc.filter(a => !searchQ || a.name.toLowerCase().includes(searchQ));
   items.forEach(a => inv += (+a.cost || 0) * (+a.qty || 0));
-
-  $('#dashGrid').innerHTML = `
-    <div class="dash-card wide" style="background:var(--green-bg);border-color:transparent">
-      <div class="lbl" style="color:var(--green)">${icon('coins',12)} Valor inventario accesorios</div>
-      <div class="val pos" style="font-size:22px;margin-top:6px">${fMoney(inv)}</div>
-    </div>`;
-
+  $('#dashGrid').innerHTML = `<div class="dash-card wide" style="background:var(--green-bg);border-color:transparent">
+    <div class="lbl" style="color:var(--green)">${icon('coins',12)} Valor inventario accesorios</div>
+    <div class="val pos" style="font-size:22px;margin-top:6px">${fMoney(inv)}</div></div>`;
   if (!items.length){
-    $('#view-acc').innerHTML = emptyState('plug', 'Sin accesorios',
-      searchQ ? 'No se encontraron coincidencias.' : 'Presiona + para agregar accesorios.');
+    $('#view-acc').innerHTML = emptyState('plug', 'Sin accesorios', searchQ ? 'No se encontraron coincidencias.' : 'Presiona + para agregar accesorios.');
     return;
   }
-
   $('#view-acc').innerHTML = items.map(a => {
     const low = a.qty <= (settings.lowStock || 2);
     return `
@@ -739,26 +668,35 @@ function renderAcc(){
   }).join('');
 }
 
-/* ============================================================
-   VIEW · WALLET
-============================================================ */
+/* ============ WALLET ============ */
 function renderWallet(){
   const eqCop = wallet.rate ? (wallet.cop / wallet.rate) : 0;
   const total = wallet.usd + wallet.usdt + wallet.zinli + eqCop;
   const recent = movs.slice(-12).reverse();
 
-  $('#dashGrid').innerHTML = `
-    <div class="dash-card wide" style="background:var(--surface-2)">
-      <div class="lbl" style="color:var(--accent)">${icon('wallet',12)} Total disponible (USD)</div>
-      <div class="val acc" style="font-size:26px;margin-top:6px">${fMoney(total)}</div>
-    </div>`;
+  $('#dashGrid').innerHTML = `<div class="dash-card wide" style="background:var(--surface-2)">
+    <div class="lbl" style="color:var(--accent)">${icon('wallet',12)} Total disponible (USD)</div>
+    <div class="val acc" style="font-size:26px;margin-top:6px">${fMoney(total)}</div></div>`;
 
   $('#view-wallet').innerHTML = `
-    <div class="wallet-grid">
-      <div class="wallet-card rate" onclick="updateRate()">
-        <div class="cur">${icon('refresh',11)} Tasa COP/USD</div>
-        <div class="amt" style="color:var(--amber)">${fMoney(wallet.rate, '$')}</div>
+    <!-- BARRA DE TASAS -->
+    <div class="rates-bar">
+      <div class="rate-pill" onclick="updateRate()">
+        <div class="edit-mini">${icon('edit',12)}</div>
+        <div class="lbl">${icon('refresh',10)} Tasa COP/USD</div>
+        <div class="val" style="color:var(--amber)">${fMoney(wallet.rate, '$')}</div>
+        <div class="hint">1 USD = ${fMoney(wallet.rate,'$')} COP</div>
       </div>
+      <div class="rate-pill p2p" onclick="updateUsdtZinli()">
+        <div class="edit-mini">${icon('edit',12)}</div>
+        <div class="lbl" style="color:var(--purple)">${icon('zap',10)} P2P USDT/Zinli</div>
+        <div class="val" style="color:var(--purple)">${fNum(wallet.usdtZinli)}</div>
+        <div class="hint">1 USDT = ${fNum(wallet.usdtZinli)} Zinli</div>
+      </div>
+    </div>
+
+    <!-- SALDOS -->
+    <div class="wallet-grid">
       <div class="wallet-card">
         <div class="cur">${icon('coins',11)} Equivalente COP</div>
         <div class="amt">${fMoney(wallet.cop, '$')}</div>
@@ -774,15 +712,18 @@ function renderWallet(){
       <div class="wallet-card">
         <div class="cur">${icon('wallet',11)} Zinli</div>
         <div class="amt">${fMoney(wallet.zinli)}</div>
+        <div class="hint" style="font-size:10.5px;color:var(--faint);margin-top:4px">≈ ${fMoney(wallet.zinli / (wallet.usdtZinli || 1))} USD</div>
       </div>
     </div>
 
+    <!-- ACCIONES -->
     <div class="wallet-actions">
-      <button class="btn primary" onclick="newWalletMove()">
-        ${icon('plus',16)} Movimiento
-      </button>
-      <button class="btn ghost" onclick="newTransfer()" style="border-color:var(--accent);color:var(--accent)">
-        ${icon('swap',16)} Transferir
+      <button class="btn primary" onclick="newWalletMove()">${icon('plus',16)} Movimiento</button>
+      <button class="btn ghost" onclick="newTransfer()" style="border-color:var(--accent);color:var(--accent)">${icon('swap',16)} Transferir</button>
+    </div>
+    <div class="wallet-actions" style="grid-template-columns:1fr">
+      <button class="btn ghost" onclick="newTransfer('usdt','zinli')" style="border-color:var(--purple);color:var(--purple)">
+        ${icon('zap',15)} P2P rápido: USDT ↔ Zinli
       </button>
     </div>
 
@@ -798,11 +739,12 @@ function renderMoveItem(m){
   if (m.type === 'transfer'){
     const from = ACCOUNTS[m.from]?.label || m.from;
     const to   = ACCOUNTS[m.to]?.label || m.to;
+    const isP2P = (m.from==='usdt'&&m.to==='zinli') || (m.from==='zinli'&&m.to==='usdt');
     return `
       <div class="h-item">
         <div class="left">
           <div class="l1">
-            <span class="tag-swap">${icon('swap',10,2.6)} TRANSF</span>
+            <span class="${isP2P?'tag-p2p':'tag-swap'}">${isP2P?icon('zap',10,2.6):icon('swap',10,2.6)} ${isP2P?'P2P':'TRANSF'}</span>
             ${esc(from)} → ${esc(to)}
           </div>
           <div class="l2">${fmtDate(m.date)}</div>
@@ -821,36 +763,22 @@ function renderMoveItem(m){
         <div class="l2">${fmtDate(m.date)} · ${esc((m.acc||'').toUpperCase())}</div>
       </div>
       <div class="right">
-        <div class="amt ${m.type === 'gasto' ? 'neg' : 'pos'}">
-          ${m.type === 'gasto' ? '−' : '+'}${fMoney(m.amt)}
-        </div>
+        <div class="amt ${m.type === 'gasto' ? 'neg' : 'pos'}">${m.type === 'gasto' ? '−' : '+'}${fMoney(m.amt)}</div>
         <button class="btn ghost sm" style="margin-top:4px" onclick="undoMove('${m.id}')">${icon('undo',11)}</button>
       </div>
     </div>`;
 }
 
-/* ============================================================
-   VIEW · HISTORY
-============================================================ */
+/* ============ HISTORY ============ */
 function renderHistory(){
   let rev = 0, prof = 0;
   hist.forEach(h => { rev += (+h.sell || 0); prof += ((+h.sell || 0) - (+h.cost || 0)); });
-
   $('#dashGrid').innerHTML = `
-    <div class="dash-card">
-      <div class="lbl">${icon('chart',11)} Ingresos</div>
-      <div class="val">${fMoney(rev)}</div>
-    </div>
-    <div class="dash-card" style="grid-column:span 2">
-      <div class="lbl">${icon('percentage',11)} Ganancia total</div>
-      <div class="val pos">+${fMoney(prof)}</div>
-    </div>`;
-
+    <div class="dash-card"><div class="lbl">${icon('chart',11)} Ingresos</div><div class="val">${fMoney(rev)}</div></div>
+    <div class="dash-card" style="grid-column:span 2"><div class="lbl">${icon('percentage',11)} Ganancia total</div><div class="val pos">+${fMoney(prof)}</div></div>`;
   const list = hist.slice().reverse();
   $('#view-history').innerHTML = `
-    <button class="btn ghost block" onclick="exportToCSV()" style="margin-bottom:14px">
-      ${icon('download',16)} Descargar reporte CSV
-    </button>
+    <button class="btn ghost block" onclick="exportToCSV()" style="margin-bottom:14px">${icon('download',16)} Descargar reporte CSV</button>
     ${list.length ? list.map(h => {
       const g = (+h.sell || 0) - (+h.cost || 0);
       return `
@@ -869,16 +797,13 @@ function renderHistory(){
           </div>
           <div class="actions">
             <button class="btn ghost" onclick="undoSale('${h.id}')">${icon('undo',14)} Anular venta</button>
-            <button class="btn ghost" style="flex:0 0 42px" onclick="resendReceipt('${h.id}')" title="Reenviar WhatsApp">${icon('message',14)}</button>
+            <button class="btn ghost" style="flex:0 0 42px" onclick="resendReceipt('${h.id}')">${icon('message',14)}</button>
           </div>
         </div>`;
-    }).join('') : emptyState('chart', 'Sin ventas', 'Aquí aparecerá el historial de todas tus ventas.')}
-  `;
+    }).join('') : emptyState('chart', 'Sin ventas', 'Aquí aparecerá el historial de todas tus ventas.')}`;
 }
 
-/* ============================================================
-   VIEW · SETTINGS
-============================================================ */
+/* ============ SETTINGS ============ */
 function renderSettings(){
   $('#dashGrid').innerHTML = '';
   const isDark = settings.theme === 'dark';
@@ -895,15 +820,23 @@ function renderSettings(){
       </div>
     </div>
 
+    <div class="section-title">Tasas de cambio</div>
+    <div class="card" style="padding:4px 14px">
+      <div class="setting-item" onclick="updateRate()">
+        <div class="setting-icon">${icon('refresh',16)}</div>
+        <div class="setting-info"><div class="st">Tasa COP / USD</div><div class="ss">1 USD = ${fMoney(wallet.rate, '$')} COP</div></div>
+      </div>
+      <div class="setting-item" onclick="updateUsdtZinli()">
+        <div class="setting-icon" style="color:var(--purple);background:var(--purple-bg);border-color:transparent">${icon('zap',16)}</div>
+        <div class="setting-info"><div class="st">Tasa P2P USDT / Zinli</div><div class="ss">1 USDT = ${fNum(wallet.usdtZinli)} Zinli</div></div>
+      </div>
+    </div>
+
     <div class="section-title">Inventario</div>
     <div class="card" style="padding:4px 14px">
       <div class="setting-item" onclick="editLowStock()">
         <div class="setting-icon">${icon('alert',16)}</div>
         <div class="setting-info"><div class="st">Alerta de stock bajo</div><div class="ss">Notificar cuando queden ${settings.lowStock} o menos</div></div>
-      </div>
-      <div class="setting-item" onclick="updateRate()">
-        <div class="setting-icon">${icon('refresh',16)}</div>
-        <div class="setting-info"><div class="st">Tasa COP / USD</div><div class="ss">$1 USD = ${fMoney(wallet.rate, '$')} COP</div></div>
       </div>
     </div>
 
@@ -935,29 +868,19 @@ function renderSettings(){
     <div class="section-title">Acerca de</div>
     <div class="card" style="padding:14px">
       <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0">
-        <span style="color:var(--muted)">Versión</span><span>2.1 · Pro</span>
+        <span style="color:var(--muted)">Versión</span><span>2.2 · Pro P2P</span>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0">
         <span style="color:var(--muted)">Cuenta</span><span>${esc(auth.currentUser?.email || '')}</span>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
-/* ============================================================
-   EMPTY STATE
-============================================================ */
 function emptyState(ic, title, text){
-  return `<div class="empty">
-    <div class="empty-ic">${icon(ic,24,1.7)}</div>
-    <h3>${esc(title)}</h3>
-    <p>${esc(text)}</p>
-  </div>`;
+  return `<div class="empty"><div class="empty-ic">${icon(ic,24,1.7)}</div><h3>${esc(title)}</h3><p>${esc(text)}</p></div>`;
 }
 
-/* ============================================================
-   MODALES
-============================================================ */
+/* ============ MODALES ============ */
 function openModal(html){
   const root = $('#modalRoot');
   root.innerHTML = `<div class="modal-content"><div class="handle"></div>${html}</div>`;
@@ -965,70 +888,41 @@ function openModal(html){
   document.body.style.overflow = 'hidden';
   root.onclick = e => { if (e.target === root) closeModal(); };
 }
-function closeModal(){
-  $('#modalRoot').classList.remove('show');
-  $('#modalRoot').innerHTML = '';
-  document.body.style.overflow = '';
-}
+function closeModal(){ $('#modalRoot').classList.remove('show'); $('#modalRoot').innerHTML = ''; document.body.style.overflow = ''; }
 window.closeModals = closeModal;
 function modalHeader(title){
-  return `<div class="modal-head">
-    <h2>${esc(title)}</h2>
-    <button class="iconbtn" onclick="closeModals()">${icon('x',18)}</button>
-  </div>`;
+  return `<div class="modal-head"><h2>${esc(title)}</h2><button class="iconbtn" onclick="closeModals()">${icon('x',18)}</button></div>`;
 }
 function confirmDialog({ title, text, confirmLabel='Eliminar', onConfirm }){
-  openModal(`
-    <div class="confirm-box">
-      <div class="confirm-ic">${icon('alert',24,2)}</div>
-      <h3>${esc(title)}</h3>
-      <p>${esc(text)}</p>
-    </div>
-    <div class="modal-foot">
-      <button class="btn ghost" onclick="closeModals()">Cancelar</button>
-      <button class="btn danger" id="confirmOk">${esc(confirmLabel)}</button>
-    </div>
-  `);
+  openModal(`<div class="confirm-box"><div class="confirm-ic">${icon('alert',24,2)}</div><h3>${esc(title)}</h3><p>${esc(text)}</p></div>
+    <div class="modal-foot"><button class="btn ghost" onclick="closeModals()">Cancelar</button><button class="btn danger" id="confirmOk">${esc(confirmLabel)}</button></div>`);
   $('#confirmOk').onclick = () => { closeModal(); onConfirm(); };
 }
 
-/* ============================================================
-   FORM · PHONE
-============================================================ */
+/* ============ FORM · PHONE ============ */
 window.editPhone = id => {
   const p = phones.find(x => x.id === id);
   if (!p) return;
-  openModal(`
-    ${modalHeader('Editar equipo')}
+  openModal(`${modalHeader('Editar equipo')}
     <form id="fPhone" class="form-grid">
       <div class="field full"><label>Modelo y capacidad</label><input class="input" name="model" required value="${esc(p.model)}"></div>
       <div class="field full"><label>IMEI / Serial</label><input class="input" name="imei" required value="${esc(p.imei)}"></div>
       <div class="field"><label>Batería %</label><input class="input" name="bat" type="number" min="0" max="100" required value="${esc(p.bat)}"></div>
-      <div class="field"><label>Notas</label><input class="input" name="notes" value="${esc(p.notes || '')}" placeholder="Opcional"></div>
+      <div class="field"><label>Notas</label><input class="input" name="notes" value="${esc(p.notes || '')}"></div>
       <div class="field"><label>Costo (USD)</label><input class="input" name="cost" type="number" step="0.01" required value="${esc(p.cost)}"></div>
       <div class="field"><label>Precio venta (USD)</label><input class="input" name="price" type="number" step="0.01" required value="${esc(p.price)}"></div>
-      <div class="modal-foot full">
-        <button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button>
-        <button type="submit" class="btn primary">Guardar cambios</button>
-      </div>
-    </form>
-  `);
+      <div class="modal-foot full"><button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button><button type="submit" class="btn primary">Guardar cambios</button></div>
+    </form>`);
   $('#fPhone').onsubmit = async e => {
     e.preventDefault();
     pushUndo('Editar equipo · ' + p.model);
     const fd = new FormData(e.target);
-    Object.assign(p, {
-      model: fd.get('model'), imei: fd.get('imei'), bat: fd.get('bat'), notes: fd.get('notes'),
-      cost: +fd.get('cost'), price: +fd.get('price')
-    });
-    closeModal(); await saveAll();
-    showToast('Equipo actualizado', true);
+    Object.assign(p, { model: fd.get('model'), imei: fd.get('imei'), bat: fd.get('bat'), notes: fd.get('notes'), cost: +fd.get('cost'), price: +fd.get('price') });
+    closeModal(); await saveAll(); showToast('Equipo actualizado', true);
   };
 };
-
 window.newPhone = () => {
-  openModal(`
-    ${modalHeader('Nuevo equipo')}
+  openModal(`${modalHeader('Nuevo equipo')}
     <form id="fPhone" class="form-grid">
       <div class="field full"><label>Modelo y capacidad</label><input class="input" name="model" required placeholder="iPhone 13 128GB" autofocus></div>
       <div class="field full"><label>IMEI / Serial</label><input class="input" name="imei" required></div>
@@ -1036,93 +930,64 @@ window.newPhone = () => {
       <div class="field"><label>Notas</label><input class="input" name="notes" placeholder="Opcional"></div>
       <div class="field"><label>Costo (USD)</label><input class="input" name="cost" type="number" step="0.01" required placeholder="0.00"></div>
       <div class="field"><label>Precio venta (USD)</label><input class="input" name="price" type="number" step="0.01" required placeholder="0.00"></div>
-      <div class="modal-foot full">
-        <button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button>
-        <button type="submit" class="btn primary">Guardar equipo</button>
-      </div>
-    </form>
-  `);
+      <div class="modal-foot full"><button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button><button type="submit" class="btn primary">Guardar equipo</button></div>
+    </form>`);
   $('#fPhone').onsubmit = async e => {
     e.preventDefault();
     const fd = new FormData(e.target);
-    const item = {
-      id: uid(), model: fd.get('model'), imei: fd.get('imei'),
-      bat: fd.get('bat'), notes: fd.get('notes'),
-      cost: +fd.get('cost'), price: +fd.get('price'),
-      date: new Date().toISOString()
-    };
+    const item = { id: uid(), model: fd.get('model'), imei: fd.get('imei'), bat: fd.get('bat'), notes: fd.get('notes'), cost: +fd.get('cost'), price: +fd.get('price'), date: new Date().toISOString() };
     pushUndo('Agregar equipo · ' + item.model);
     phones.push(item);
-    closeModal(); await saveAll();
-    showToast('Equipo agregado al inventario', true);
+    closeModal(); await saveAll(); showToast('Equipo agregado al inventario', true);
   };
 };
 
-/* ============================================================
-   FORM · ACC
-============================================================ */
+/* ============ FORM · ACC ============ */
 window.editAcc = id => {
   const a = acc.find(x => x.id === id);
   if (!a) return;
-  openModal(`
-    ${modalHeader('Editar accesorio')}
+  openModal(`${modalHeader('Editar accesorio')}
     <form id="fAcc" class="form-grid">
       <div class="field full"><label>Nombre</label><input class="input" name="name" required value="${esc(a.name)}"></div>
       <div class="field full"><label>Cantidad en stock</label><input class="input" name="qty" type="number" min="0" required value="${esc(a.qty)}"></div>
       <div class="field"><label>Costo unitario (USD)</label><input class="input" name="cost" type="number" step="0.01" required value="${esc(a.cost)}"></div>
       <div class="field"><label>Precio venta (USD)</label><input class="input" name="price" type="number" step="0.01" required value="${esc(a.price)}"></div>
-      <div class="modal-foot full">
-        <button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button>
-        <button type="submit" class="btn primary">Guardar cambios</button>
-      </div>
-    </form>
-  `);
+      <div class="modal-foot full"><button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button><button type="submit" class="btn primary">Guardar cambios</button></div>
+    </form>`);
   $('#fAcc').onsubmit = async e => {
     e.preventDefault();
     pushUndo('Editar accesorio · ' + a.name);
     const fd = new FormData(e.target);
     Object.assign(a, { name: fd.get('name'), qty: +fd.get('qty'), cost: +fd.get('cost'), price: +fd.get('price') });
-    closeModal(); await saveAll();
-    showToast('Accesorio actualizado', true);
+    closeModal(); await saveAll(); showToast('Accesorio actualizado', true);
   };
 };
-
 window.newAcc = () => {
-  openModal(`
-    ${modalHeader('Nuevo accesorio')}
+  openModal(`${modalHeader('Nuevo accesorio')}
     <form id="fAcc" class="form-grid">
       <div class="field full"><label>Nombre</label><input class="input" name="name" required placeholder="Cargador 20W" autofocus></div>
       <div class="field full"><label>Stock inicial</label><input class="input" name="qty" type="number" min="0" required placeholder="10"></div>
       <div class="field"><label>Costo unitario (USD)</label><input class="input" name="cost" type="number" step="0.01" required placeholder="0.00"></div>
       <div class="field"><label>Precio venta (USD)</label><input class="input" name="price" type="number" step="0.01" required placeholder="0.00"></div>
-      <div class="modal-foot full">
-        <button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button>
-        <button type="submit" class="btn primary">Guardar accesorio</button>
-      </div>
-    </form>
-  `);
+      <div class="modal-foot full"><button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button><button type="submit" class="btn primary">Guardar accesorio</button></div>
+    </form>`);
   $('#fAcc').onsubmit = async e => {
     e.preventDefault();
     const fd = new FormData(e.target);
     const item = { id: uid(), name: fd.get('name'), qty: +fd.get('qty'), cost: +fd.get('cost'), price: +fd.get('price') };
     pushUndo('Agregar accesorio · ' + item.name);
     acc.push(item);
-    closeModal(); await saveAll();
-    showToast('Accesorio agregado', true);
+    closeModal(); await saveAll(); showToast('Accesorio agregado', true);
   };
 };
 
-/* ============================================================
-   FORM · SELL
-============================================================ */
+/* ============ FORM · SELL ============ */
 window.prepSell = (type, id) => {
   const item = type === 'phone' ? phones.find(x => x.id === id) : acc.find(x => x.id === id);
   if (!item) return;
   if (type === 'acc' && item.qty <= 0){ showToast('Sin stock disponible'); return; }
   pendingSale = { type, id };
-
-  openModal(`
-    ${modalHeader('Confirmar venta')}
+  openModal(`${modalHeader('Confirmar venta')}
     <div style="padding:12px;background:var(--surface-2);border-radius:10px;margin-bottom:16px">
       <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:600">Producto</div>
       <div style="font-size:15px;font-weight:600;margin-top:2px">${esc(item.model || item.name)}</div>
@@ -1140,23 +1005,13 @@ window.prepSell = (type, id) => {
           <option value="zinli">Zinli</option>
         </select>
       </div>
-      <div class="modal-foot full">
-        <button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button>
-        <button type="submit" class="btn green">${icon('message',15)} Vender y enviar recibo</button>
-      </div>
-    </form>
-  `);
-
+      <div class="modal-foot full"><button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button><button type="submit" class="btn green">${icon('message',15)} Vender y enviar recibo</button></div>
+    </form>`);
   $('#fSell').onsubmit = async e => {
     e.preventDefault();
     const fd = new FormData(e.target);
-    const client = fd.get('client');
-    const phone  = fd.get('phone');
-    const price  = +fd.get('price');
-    const account = fd.get('account');
-
+    const client = fd.get('client'), phone = fd.get('phone'), price = +fd.get('price'), account = fd.get('account');
     pushUndo('Venta · ' + (item.model || item.name));
-
     let saleItemStr = '';
     if (type === 'phone'){
       hist.push({ id: uid(), type:'phone', name: item.model, imei: item.imei, client, cost: item.cost, sell: price, account, date: new Date().toISOString() });
@@ -1167,72 +1022,43 @@ window.prepSell = (type, id) => {
       saleItemStr = `🔌 *${item.name}*`;
       item.qty -= 1;
     }
-
     if (account === 'cop') wallet.cop += price * wallet.rate;
     else wallet[account] += price;
-
     closeModal(); await saveAll();
     showToast('Venta registrada · ' + (item.model || item.name), true);
-
-    const msg = (settings.waTemplate || '')
-      .replace(/{cliente}/g, client)
-      .replace(/{producto}/g, saleItemStr)
-      .replace(/{precio}/g, price.toFixed(2))
-      .replace(/{fecha}/g, fmtDate(new Date()));
+    const msg = (settings.waTemplate || '').replace(/{cliente}/g, client).replace(/{producto}/g, saleItemStr).replace(/{precio}/g, price.toFixed(2)).replace(/{fecha}/g, fmtDate(new Date()));
     window.open(`https://wa.me/${phone.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`, '_blank');
   };
 };
 
-/* ============================================================
-   FORM · WALLET MOVE
-============================================================ */
+/* ============ FORM · WALLET MOVE ============ */
 window.newWalletMove = () => {
-  openModal(`
-    ${modalHeader('Movimiento de caja')}
+  openModal(`${modalHeader('Movimiento de caja')}
     <form id="fWallet" class="form-grid">
       <div class="field full"><label>Tipo de movimiento</label>
-        <select class="input" name="type">
-          <option value="add">Ingreso extra</option>
-          <option value="sub">Gasto operativo</option>
-        </select>
+        <select class="input" name="type"><option value="add">Ingreso extra</option><option value="sub">Gasto operativo</option></select>
       </div>
       <div class="field full"><label>Descripción</label><input class="input" name="desc" required placeholder="Pasajes, publicidad, etc." autofocus></div>
       <div class="field"><label>Cuenta</label>
-        <select class="input" name="account">
-          <option value="usd">Efectivo USD</option>
-          <option value="cop">Efectivo COP</option>
-          <option value="usdt">USDT</option>
-          <option value="zinli">Zinli</option>
-        </select>
+        <select class="input" name="account"><option value="usd">Efectivo USD</option><option value="cop">Efectivo COP</option><option value="usdt">USDT</option><option value="zinli">Zinli</option></select>
       </div>
       <div class="field"><label>Monto</label><input class="input" name="amount" type="number" step="0.01" required placeholder="0.00"></div>
-      <div class="modal-foot full">
-        <button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button>
-        <button type="submit" class="btn primary">Registrar</button>
-      </div>
-    </form>
-  `);
+      <div class="modal-foot full"><button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button><button type="submit" class="btn primary">Registrar</button></div>
+    </form>`);
   $('#fWallet').onsubmit = async e => {
     e.preventDefault();
     const fd = new FormData(e.target);
-    const type    = fd.get('type');
-    const desc    = fd.get('desc');
-    const account = fd.get('account');
-    const amount  = +fd.get('amount');
-
+    const type = fd.get('type'), desc = fd.get('desc'), account = fd.get('account'), amount = +fd.get('amount');
     pushUndo((type === 'sub' ? 'Gasto · ' : 'Ingreso · ') + desc);
     if (type === 'sub') wallet[account] -= amount;
     else                wallet[account] += amount;
-
     movs.push({ id: uid(), type: type === 'sub' ? 'gasto' : 'ingreso', desc, amt: amount, acc: account, date: new Date().toISOString() });
-
-    closeModal(); await saveAll();
-    showToast('Movimiento registrado', true);
+    closeModal(); await saveAll(); showToast('Movimiento registrado', true);
   };
 };
 
 /* ============================================================
-   FORM · TRANSFER  ⭐ NUEVO
+   FORM · TRANSFER  (con soporte P2P)
 ============================================================ */
 function accountOptions(selected, exclude){
   return Object.entries(ACCOUNTS).map(([k,v]) =>
@@ -1240,32 +1066,11 @@ function accountOptions(selected, exclude){
   ).join('');
 }
 
-/* Calcula el monto convertido entre dos cuentas */
-function calcConvert(from, to, amount){
-  const isDollar = k => ACCOUNTS[k]?.dollar;
-  if (!amount || amount <= 0) return { out: 0, rateLabel: '' };
-  if (from === to) return { out: amount, rateLabel: 'Mismo tipo de cuenta' };
-  // Mismo tipo "dólar": USD, USDT, Zinli → 1:1
-  if (isDollar(from) && isDollar(to)) {
-    return { out: amount, rateLabel: `1 ${ACCOUNTS[from].cur} = 1 ${ACCOUNTS[to].cur}` };
-  }
-  // Dólar → COP
-  if (isDollar(from) && to === 'cop') {
-    return { out: amount * wallet.rate, rateLabel: `× ${fMoney(wallet.rate, '$')} COP/USD` };
-  }
-  // COP → Dólar
-  if (from === 'cop' && isDollar(to)) {
-    return { out: amount / wallet.rate, rateLabel: `÷ ${fMoney(wallet.rate, '$')} COP/USD` };
-  }
-  return { out: amount, rateLabel: '' };
-}
-
 window.newTransfer = (fromPreset, toPreset) => {
   const from = fromPreset || 'usd';
   const to   = toPreset   || 'usdt';
 
-  openModal(`
-    ${modalHeader('Transferir entre cuentas')}
+  openModal(`${modalHeader('Transferir entre cuentas')}
     <form id="fTransfer">
       <div class="swap-wrap">
         <div class="field" style="margin-bottom:0">
@@ -1293,20 +1098,33 @@ window.newTransfer = (fromPreset, toPreset) => {
 
       <div class="modal-foot">
         <button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button>
-        <button type="submit" class="btn primary">${icon('swap',15)} Transferir</button>
+        <button type="submit" class="btn primary" id="transferSubmit">${icon('swap',15)} Transferir</button>
       </div>
-    </form>
-  `);
+    </form>`);
 
   const refresh = () => {
     const fromK = $('#fromAcc').value;
     const toK   = $('#toAcc').value;
     const amt   = +$('#tAmount').value || 0;
     const r = calcConvert(fromK, toK, amt);
-    const toSym = ACCOUNTS[toK].sym;
-    const outTxt = (toK === 'cop' ? fMoney(r.out, '$') + ' COP' : fMoney(r.out, toSym));
+    const outTxt = (toK === 'cop')
+      ? fMoney(r.out, '$') + ' COP'
+      : fMoney(r.out);
     $('#convOut').textContent = outTxt;
     $('#convRate').textContent = r.rateLabel || '—';
+
+    const box = $('#convertBox');
+    const btn = $('#transferSubmit');
+    if (r.isP2P){
+      box.classList.add('p2p');
+      btn.className = 'btn'; btn.style.background = 'var(--purple)'; btn.style.color = '#fff';
+      btn.innerHTML = `${icon('zap',15)} Transferir P2P`;
+    } else {
+      box.classList.remove('p2p');
+      btn.className = 'btn primary'; btn.style.background = ''; btn.style.color = '';
+      btn.innerHTML = `${icon('swap',15)} Transferir`;
+    }
+
     const avail = wallet[fromK] || 0;
     const suf = fromK === 'cop' ? ' COP' : ' USD';
     $('#availInfo').innerHTML = `Disponible: <b style="color:var(--text)">${fMoney(avail, '$')}${suf}</b>` +
@@ -1317,10 +1135,8 @@ window.newTransfer = (fromPreset, toPreset) => {
   $('#toAcc').onchange   = refresh;
   $('#tAmount').oninput  = refresh;
   $('#swapBtn').onclick = () => {
-    const a = $('#fromAcc').value;
-    const b = $('#toAcc').value;
-    $('#fromAcc').value = b;
-    $('#toAcc').value   = a;
+    const a = $('#fromAcc').value, b = $('#toAcc').value;
+    $('#fromAcc').value = b; $('#toAcc').value = a;
     refresh();
   };
   refresh();
@@ -1330,24 +1146,21 @@ window.newTransfer = (fromPreset, toPreset) => {
     const fromK = $('#fromAcc').value;
     const toK   = $('#toAcc').value;
     const amt   = +$('#tAmount').value;
-
     if (fromK === toK) { showToast('Elige cuentas diferentes'); return; }
     if (!amt || amt <= 0) { showToast('Monto inválido'); return; }
     if (amt > (wallet[fromK] || 0)) { showToast('Saldo insuficiente en ' + ACCOUNTS[fromK].label); return; }
 
     const r = calcConvert(fromK, toK, amt);
+    const isP2P = r.isP2P;
 
     pushUndo(`Transferir ${ACCOUNTS[fromK].label} → ${ACCOUNTS[toK].label}`);
     wallet[fromK] -= amt;
     wallet[toK]   += r.out;
 
     movs.push({
-      id: uid(),
-      type: 'transfer',
-      from: fromK,
-      to: toK,
-      amt: amt,        // lo que salió
-      amtIn: r.out,    // lo que entró
+      id: uid(), type: 'transfer',
+      from: fromK, to: toK,
+      amt: amt, amtIn: r.out,
       desc: `${ACCOUNTS[fromK].label} → ${ACCOUNTS[toK].label}`,
       acc: fromK,
       date: new Date().toISOString()
@@ -1355,13 +1168,11 @@ window.newTransfer = (fromPreset, toPreset) => {
 
     closeModal(); await saveAll();
     const outTxt = toK === 'cop' ? fMoney(r.out, '$') + ' COP' : fMoney(r.out);
-    showToast(`Transferido · ${fMoney(amt)} → ${outTxt}`, true);
+    showToast(`${isP2P?'P2P · ':''}${fMoney(amt)} → ${outTxt}`, true);
   };
 };
 
-/* ============================================================
-   STOCK / DELETE / UNDO
-============================================================ */
+/* ============ STOCK / DELETE / UNDO ============ */
 window.modStock = async (id, delta) => {
   const a = acc.find(x => x.id === id);
   if (!a) return;
@@ -1384,8 +1195,7 @@ window.confirmDelete = (type, id) => {
       pushUndo('Eliminar · ' + name);
       if (type === 'phone') phones = phones.filter(x => x.id !== id);
       else                  acc    = acc.filter(x => x.id !== id);
-      await saveAll();
-      showToast('Eliminado · ' + name, true);
+      await saveAll(); showToast('Eliminado · ' + name, true);
     }
   });
 };
@@ -1400,19 +1210,15 @@ window.undoSale = id => {
     onConfirm: async () => {
       pushUndo('Anular venta · ' + sale.name);
       hist = hist.filter(h => h.id !== id);
-
       if (sale.type === 'phone'){
         phones.push({ id: uid(), model: sale.name, imei: sale.imei, bat: 100, notes: 'Restaurado de venta anulada', cost: sale.cost, price: sale.sell, date: new Date().toISOString() });
       } else {
         const a = acc.find(x => x.name === sale.name);
         if (a) a.qty += 1;
       }
-
       if (sale.account === 'cop') wallet.cop -= sale.sell * wallet.rate;
       else if (sale.account) wallet[sale.account] -= sale.sell;
-
-      await saveAll();
-      showToast('Venta anulada · ' + sale.name, true);
+      await saveAll(); showToast('Venta anulada · ' + sale.name, true);
     }
   });
 };
@@ -1423,23 +1229,16 @@ window.undoMove = id => {
   const isTransfer = m.type === 'transfer';
   confirmDialog({
     title: isTransfer ? '¿Revertir esta transferencia?' : '¿Eliminar este movimiento?',
-    text: isTransfer
-      ? `Se devolverá ${fMoney(m.amt)} a ${ACCOUNTS[m.from].label} y se restará de ${ACCOUNTS[m.to].label}.`
-      : 'Se revertirá el cambio en la cuenta correspondiente.',
+    text: isTransfer ? `Se devolverá ${fMoney(m.amt)} a ${ACCOUNTS[m.from].label} y se restará de ${ACCOUNTS[m.to].label}.`
+                     : 'Se revertirá el cambio en la cuenta correspondiente.',
     confirmLabel: 'Sí, revertir',
     onConfirm: async () => {
       pushUndo(isTransfer ? 'Revertir transferencia' : 'Revertir ' + (m.type === 'gasto' ? 'gasto' : 'ingreso') + ' · ' + m.desc);
-      if (isTransfer){
-        wallet[m.from] += m.amt;
-        wallet[m.to]   -= m.amtIn;
-      } else if (m.type === 'gasto'){
-        wallet[m.acc] += m.amt;
-      } else {
-        wallet[m.acc] -= m.amt;
-      }
+      if (isTransfer){ wallet[m.from] += m.amt; wallet[m.to] -= m.amtIn; }
+      else if (m.type === 'gasto'){ wallet[m.acc] += m.amt; }
+      else { wallet[m.acc] -= m.amt; }
       movs = movs.filter(x => x.id !== id);
-      await saveAll();
-      showToast('Movimiento revertido', true);
+      await saveAll(); showToast('Movimiento revertido', true);
     }
   });
 };
@@ -1450,32 +1249,20 @@ window.resendReceipt = id => {
   const phone = prompt('Número de WhatsApp (con código de país):', '');
   if (!phone) return;
   const itemStr = h.type === 'phone' ? `📱 *${h.name}*\nIMEI: ${h.imei}` : `🔌 *${h.name}*`;
-  const msg = (settings.waTemplate || '')
-    .replace(/{cliente}/g, h.client || '')
-    .replace(/{producto}/g, itemStr)
-    .replace(/{precio}/g, (+h.sell).toFixed(2))
-    .replace(/{fecha}/g, fmtDate(h.date));
+  const msg = (settings.waTemplate || '').replace(/{cliente}/g, h.client || '').replace(/{producto}/g, itemStr).replace(/{precio}/g, (+h.sell).toFixed(2)).replace(/{fecha}/g, fmtDate(h.date));
   window.open(`https://wa.me/${phone.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`, '_blank');
 };
 
-/* ============================================================
-   FAB
-============================================================ */
+/* ============ FAB ============ */
 window.handleFab = () => {
   if (currentTab === 'phones') newPhone();
   else if (currentTab === 'acc') newAcc();
   else if (currentTab === 'wallet') newWalletMove();
 };
 
-/* ============================================================
-   AJUSTES
-============================================================ */
+/* ============ SETTINGS ============ */
 window.openSettings = () => switchTab('settings');
-
-window.toggleTheme = async () => {
-  settings.theme = settings.theme === 'dark' ? 'light' : 'dark';
-  applyTheme(); await saveAll();
-};
+window.toggleTheme = async () => { settings.theme = settings.theme === 'dark' ? 'light' : 'dark'; applyTheme(); await saveAll(); };
 window.editBusinessName = async () => {
   const name = prompt('Nombre del negocio:', settings.businessName);
   if (name && name.trim()){ settings.businessName = name.trim(); await saveAll(); showToast('Nombre actualizado'); }
@@ -1490,7 +1277,11 @@ window.editWaTemplate = async () => {
 };
 window.updateRate = async () => {
   const r = prompt('Tasa COP por 1 USD:', wallet.rate);
-  if (r && +r > 0){ wallet.rate = +r; await saveAll(); showToast('Tasa actualizada'); }
+  if (r && +r > 0){ wallet.rate = +r; await saveAll(); showToast('Tasa COP actualizada'); }
+};
+window.updateUsdtZinli = async () => {
+  const r = prompt('¿Cuántos Zinli equivalen a 1 USDT? (P2P)', wallet.usdtZinli);
+  if (r && +r > 0){ wallet.usdtZinli = +r; await saveAll(); showToast('Tasa P2P actualizada · 1 USDT = ' + fNum(wallet.usdtZinli) + ' Zinli'); }
 };
 
 window.exportBackup = () => {
@@ -1530,16 +1321,13 @@ window.clearAllData = () => {
     onConfirm: async () => {
       pushUndo('Borrar todos los datos');
       phones = []; acc = []; hist = []; movs = [];
-      wallet = { usd:0, cop:0, usdt:0, zinli:0, rate: wallet.rate };
-      await saveAll();
-      showToast('Datos eliminados', true);
+      wallet = { usd:0, cop:0, usdt:0, zinli:0, rate: wallet.rate, usdtZinli: wallet.usdtZinli };
+      await saveAll(); showToast('Datos eliminados', true);
     }
   });
 };
 
-/* ============================================================
-   CSV
-============================================================ */
+/* ============ CSV ============ */
 window.exportToCSV = () => {
   let csv = 'Cliente,Producto,IMEI,Costo (USD),Venta (USD),Ganancia (USD),Cuenta,Fecha\n';
   hist.forEach(h => {
@@ -1554,14 +1342,10 @@ window.exportToCSV = () => {
   showToast('Reporte CSV descargado');
 };
 
-/* ============================================================
-   ATAJOS
-============================================================ */
+/* ============ ATAJOS ============ */
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeModal();
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey){
-    e.preventDefault(); undoLast();
-  }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey){ e.preventDefault(); undoLast(); }
   if (e.key === '/' && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){
     e.preventDefault();
     if (currentTab === 'phones' || currentTab === 'acc') $('#searchInput')?.focus();
