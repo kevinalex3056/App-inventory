@@ -358,9 +358,6 @@ function logoN(size = 20, sw = 2.6){
   return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"><path d="M7 19V5l10 14V5"/></svg>`;
 }
 
-/* ============================================================
-   ESTADO
-============================================================ */
 let phones = [], acc = [], hist = [], movs = [];
 let wallet = { usd:0, cop:0, usdt:0, zinli:0, rate:4000, usdtZinli:1 };
 let settings = {
@@ -384,30 +381,56 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt
 const fmtDate = d => new Date(d).toLocaleDateString('es', { day:'2-digit', month:'short', year:'numeric' });
 
 /* ============================================================
-   FORMATEA TELÉFONO — formato Venezuela 04xx-xxxxxxx 🇻🇪
+   FORMATEA TELÉFONO PARA MOSTRAR (formato Venezuela 🇻🇪)
 ============================================================ */
 function fmtPhone(p){
   if (!p) return '';
   const digits = String(p).replace(/\D/g,'');
   if (!digits) return '';
-  // 0412-1234567 (11 dígitos, empieza con 0)
   if (digits.length === 11 && digits.startsWith('0')){
     return digits.slice(0,4) + '-' + digits.slice(4);
   }
-  // +58 412-1234567 (12 dígitos, empieza con 58)
   if (digits.length === 12 && digits.startsWith('58')){
     return '+58 ' + digits.slice(2,5) + '-' + digits.slice(5);
   }
-  // 412-1234567 (10 dígitos, empieza con 4)
   if (digits.length === 10 && digits.startsWith('4')){
     return digits.slice(0,3) + '-' + digits.slice(3);
   }
-  // Fallback: empieza con 0 y tiene ≥10 dígitos
   if (digits.startsWith('0') && digits.length >= 10){
     return digits.slice(0,4) + '-' + digits.slice(4);
   }
-  // Fallback genérico (3-3-4)
   if (digits.length === 10) return digits.slice(0,3) + '-' + digits.slice(3,6) + '-' + digits.slice(6);
+  return digits;
+}
+
+/* ============================================================
+   NORMALIZA TELÉFONO PARA wa.me (formato internacional sin +)
+   - 0412-1234567  → 584121234567
+   - 04121234567   → 584121234567
+   - 4121234567    → 584121234567
+   - +58 412...    → 584121234567
+   - 584121234567  → 584121234567
+   - +57 300...    → 57300... (respeta otros países)
+============================================================ */
+function normalizePhoneForWA(p){
+  if (!p) return '';
+  let digits = String(p).replace(/\D/g,'');
+  if (!digits) return '';
+
+  // Ya tiene código país Venezuela (58...) con 12 dígitos
+  if (digits.startsWith('58') && digits.length >= 12) return digits;
+
+  // Formato local con 0: 04121234567 (11 dígitos) → 584121234567
+  if (digits.startsWith('0') && digits.length === 11){
+    return '58' + digits.slice(1);
+  }
+
+  // Formato sin 0: 4121234567 (10 dígitos, empieza con 4) → 584121234567
+  if (digits.length === 10 && digits.startsWith('4')){
+    return '58' + digits;
+  }
+
+  // Otros países: ya viene con código país, devolver tal cual
   return digits;
 }
 
@@ -809,14 +832,14 @@ function renderHistory(){
 window.openWhatsAppForSale = id => {
   const h = hist.find(x => x.id === id);
   if (!h || !h.clientPhone) return;
-  const digits = String(h.clientPhone).replace(/\D/g,'');
+  const waNumber = normalizePhoneForWA(h.clientPhone);   /* ⭐ normaliza a 584... */
   const itemStr = h.type === 'phone' ? `📱 *${h.name}*\nIMEI: ${h.imei}` : `🔌 *${h.name}*`;
   const msg = (settings.waTemplate || '')
     .replace(/{cliente}/g, h.client || '')
     .replace(/{producto}/g, itemStr)
     .replace(/{precio}/g, (+h.sell).toFixed(2))
     .replace(/{fecha}/g, fmtDate(h.date));
-  window.open(`https://wa.me/${digits}?text=${encodeURIComponent(msg)}`, '_blank');
+  window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
 };
 
 window.copyPhone = async id => {
@@ -898,7 +921,7 @@ function renderSettings(){
     <div class="section-title">Acerca de</div>
     <div class="card" style="padding:14px">
       <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0">
-        <span style="color:var(--muted)">Versión</span><span>2.4 · Pro P2P VE</span>
+        <span style="color:var(--muted)">Versión</span><span>2.5 · Pro P2P VE</span>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0">
         <span style="color:var(--muted)">Cuenta</span><span>${esc(auth.currentUser?.email || '')}</span>
@@ -1021,7 +1044,13 @@ window.prepSell = (type, id) => {
     </div>
     <form id="fSell" class="form-grid">
       <div class="field full"><label>Nombre del cliente</label><input class="input" name="client" required placeholder="Juan Pérez" autofocus></div>
-      <div class="field full"><label>WhatsApp del cliente</label><input class="input" name="phone" type="tel" required placeholder="0412-1234567"></div>
+      <div class="field full">
+        <label>WhatsApp del cliente</label>
+        <input class="input" name="phone" type="tel" required placeholder="0412-1234567">
+        <small style="font-size:11px;color:var(--faint);margin-top:4px;display:block">
+          Puedes escribirlo como 0412-1234567, 4121234567 o +58412…
+        </small>
+      </div>
       <div class="field"><label>Precio final (USD)</label><input class="input" name="price" type="number" step="0.01" required value="${esc(item.price)}"></div>
       <div class="field"><label>Método de pago</label>
         <select class="input" name="account">
@@ -1070,12 +1099,15 @@ window.prepSell = (type, id) => {
     closeModal(); await saveAll();
     showToast('Venta registrada · ' + (item.model || item.name), true);
 
+    /* ⭐ NORMALIZA EL TELÉFONO PARA wa.me */
+    const waNumber = normalizePhoneForWA(phone);
+
     const msg = (settings.waTemplate || '')
       .replace(/{cliente}/g, client)
       .replace(/{producto}/g, saleItemStr)
       .replace(/{precio}/g, price.toFixed(2))
       .replace(/{fecha}/g, fmtDate(new Date()));
-    window.open(`https://wa.me/${phone.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`, '_blank');
+    window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
   };
 };
 
@@ -1273,19 +1305,20 @@ window.undoMove = id => {
 window.resendReceipt = id => {
   const h = hist.find(x => x.id === id);
   if (!h) return;
-  let phone = h.clientPhone ? String(h.clientPhone).replace(/\D/g,'') : '';
-  if (!phone){
+  let rawPhone = h.clientPhone || '';
+  if (!rawPhone){
     const input = prompt('Número de WhatsApp (con código de país):', '');
     if (!input) return;
-    phone = input.replace(/\D/g,'');
+    rawPhone = input;
   }
+  const waNumber = normalizePhoneForWA(rawPhone);   /* ⭐ normaliza a 584... */
   const itemStr = h.type === 'phone' ? `📱 *${h.name}*\nIMEI: ${h.imei}` : `🔌 *${h.name}*`;
   const msg = (settings.waTemplate || '')
     .replace(/{cliente}/g, h.client || '')
     .replace(/{producto}/g, itemStr)
     .replace(/{precio}/g, (+h.sell).toFixed(2))
     .replace(/{fecha}/g, fmtDate(h.date));
-  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+  window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
 };
 
 window.handleFab = () => {
@@ -1364,7 +1397,7 @@ window.exportToCSV = () => {
   let csv = 'Cliente,WhatsApp,Producto,IMEI,Costo (USD),Venta (USD),Ganancia (USD),Cuenta,Fecha\n';
   hist.forEach(h => {
     const g = (+h.sell || 0) - (+h.cost || 0);
-    const phone = h.clientPhone ? String(h.clientPhone).replace(/\D/g,'') : '';
+    const phone = h.clientPhone ? normalizePhoneForWA(h.clientPhone) : '';
     csv += `"${(h.client||'').replace(/"/g,'""')}","${phone}","${(h.name||'').replace(/"/g,'""')}","${h.imei||''}",${h.cost},${h.sell},${g},${h.account||''},"${fmtDate(h.date)}"\n`;
   });
   const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
@@ -1385,4 +1418,4 @@ document.addEventListener('keydown', e => {
 });
 </script>
 </body>
-</html>
+  </html>
