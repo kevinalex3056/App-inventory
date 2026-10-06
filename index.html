@@ -1304,38 +1304,138 @@ window.newPhone = () => {
 window.editAcc = id => {
   const a = acc.find(x => x.id === id);
   if (!a) return;
+
   openModal(`${modalHeader('Editar accesorio')}
     <form id="fAcc" class="form-grid">
       <div class="field full"><label>Nombre</label><input class="input" name="name" required value="${esc(a.name)}"></div>
       <div class="field full"><label>Cantidad en stock</label><input class="input" name="qty" type="number" min="0" required value="${esc(a.qty)}"></div>
       <div class="field"><label>Costo unitario (USD)</label><input class="input" name="cost" type="number" step="0.01" required value="${esc(a.cost)}"></div>
-      <div class="field"><label>Precio venta (USD)</label><input class="input" name="price" type="number" step="0.01" required value="${esc(a.price)}"></div>
+      <div class="field"><label>Costo envío total (USD)</label><input class="input" name="ship" type="number" step="0.01" value="${esc(a.ship || 0)}"></div>
+      <div class="field"><label>Método de pago</label>
+        <select class="input" name="payMethod">
+          <option value="Binance" ${a.payMethod === 'Binance' ? 'selected' : ''}>Tarjeta Binance</option>
+          <option value="Zinli" ${a.payMethod === 'Zinli' ? 'selected' : ''}>Tarjeta Zinli</option>
+          <option value="Efectivo" ${a.payMethod === 'Efectivo' ? 'selected' : ''}>Efectivo Físico</option>
+        </select>
+      </div>
+      <div class="field"><label>Descontar de</label>
+        <select class="input" name="payCurrency">
+          <option value="usdt" ${a.payCurrency === 'usdt' ? 'selected' : ''}>USDT</option>
+          <option value="usd" ${a.payCurrency === 'usd' ? 'selected' : ''}>USD ($)</option>
+          <option value="zinli" ${a.payCurrency === 'zinli' ? 'selected' : ''}>Zinli</option>
+          <option value="cop" ${a.payCurrency === 'cop' ? 'selected' : ''}>COP (Pesos)</option>
+        </select>
+      </div>
+      <div class="field full"><label>Precio venta unitario (USD)</label><input class="input" name="price" type="number" step="0.01" required value="${esc(a.price)}"></div>
       <div class="modal-foot full"><button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button><button type="submit" class="btn primary">Guardar cambios</button></div>
     </form>`);
+
   $('#fAcc').onsubmit = async e => {
     e.preventDefault();
-    pushUndo('Editar accesorio · ' + a.name);
+    pushUndo('Editar accesorio ' + a.name);
     const fd = new FormData(e.target);
-    Object.assign(a, { name: fd.get('name'), qty: +fd.get('qty'), cost: +fd.get('cost'), price: +fd.get('price') });
-    closeModal(); await saveAll(); showToast('Accesorio actualizado', true);
+
+    // Calcular diferencias para devolver o quitar saldo si cambian costos/cantidades
+    const qtyAnterior = a.qty || 0;
+    const costoAnterior = a.cost || 0;
+    const envioAnterior = a.ship || 0;
+    const costoAnteriorTotal = (costoAnterior * qtyAnterior) + envioAnterior;
+
+    const nuevaQty = +fd.get('qty');
+    const nuevoCostoUnitario = +fd.get('cost');
+    const nuevoEnvio = +fd.get('ship') || 0;
+    const nuevoCostoTotal = (nuevoCostoUnitario * nuevaQty) + nuevoEnvio;
+
+    const diferencia = nuevoCostoTotal - costoAnteriorTotal;
+    const moneda = fd.get('payCurrency');
+
+    if (diferencia !== 0 && typeof wallet !== 'undefined' && wallet && wallet[moneda] !== undefined) {
+      if (moneda === 'cop') {
+        const tasa = typeof rateCOP !== 'undefined' ? rateCOP : 1;
+        wallet.cop -= (diferencia * tasa);
+      } else {
+        wallet[moneda] -= diferencia;
+      }
+    }
+
+    Object.assign(a, {
+      name: fd.get('name'),
+      qty: nuevaQty,
+      cost: nuevoCostoUnitario,
+      ship: nuevoEnvio,
+      payMethod: fd.get('payMethod'),
+      payCurrency: moneda,
+      price: +fd.get('price')
+    });
+
+    closeModal();
+    await saveAll();
+    showToast('Accesorio actualizado y saldo ajustado', true);
   };
 };
 window.newAcc = () => {
   openModal(`${modalHeader('Nuevo accesorio')}
     <form id="fAcc" class="form-grid">
-      <div class="field full"><label>Nombre</label><input class="input" name="name" required placeholder="Cargador 20W" autofocus></div>
-      <div class="field full"><label>Stock inicial</label><input class="input" name="qty" type="number" min="0" required placeholder="10"></div>
+      <div class="field full"><label>Nombre</label><input class="input" name="name" required placeholder="Funda iPhone 13" autofocus></div>
+      <div class="field full"><label>Cantidad en stock</label><input class="input" name="qty" type="number" min="1" required placeholder="10"></div>
       <div class="field"><label>Costo unitario (USD)</label><input class="input" name="cost" type="number" step="0.01" required placeholder="0.00"></div>
-      <div class="field"><label>Precio venta (USD)</label><input class="input" name="price" type="number" step="0.01" required placeholder="0.00"></div>
+      <div class="field"><label>Costo envío total (USD)</label><input class="input" name="ship" type="number" step="0.01" value="0.00"></div>
+      <div class="field"><label>Método de pago</label>
+        <select class="input" name="payMethod">
+          <option value="Binance">Tarjeta Binance</option>
+          <option value="Zinli">Tarjeta Zinli</option>
+          <option value="Efectivo">Efectivo Físico</option>
+        </select>
+      </div>
+      <div class="field"><label>Descontar de</label>
+        <select class="input" name="payCurrency">
+          <option value="usdt">USDT</option>
+          <option value="usd">USD ($)</option>
+          <option value="zinli">Zinli</option>
+          <option value="cop">COP (Pesos)</option>
+        </select>
+      </div>
+      <div class="field full"><label>Precio venta unitario (USD)</label><input class="input" name="price" type="number" step="0.01" required placeholder="0.00"></div>
       <div class="modal-foot full"><button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button><button type="submit" class="btn primary">Guardar accesorio</button></div>
     </form>`);
+
   $('#fAcc').onsubmit = async e => {
     e.preventDefault();
     const fd = new FormData(e.target);
-    const item = { id: uid(), name: fd.get('name'), qty: +fd.get('qty'), cost: +fd.get('cost'), price: +fd.get('price') };
-    pushUndo('Agregar accesorio · ' + item.name);
+    const qty = +fd.get('qty');
+    const cost = +fd.get('cost');
+    const ship = +fd.get('ship') || 0;
+    
+    // El gasto total es (Costo unitario * cantidad) + Envío
+    const totalGasto = (cost * qty) + ship;
+    const moneda = fd.get('payCurrency');
+
+    pushUndo('Agregar accesorio ' + fd.get('name'));
+
+    if (typeof wallet !== 'undefined' && wallet && wallet[moneda] !== undefined) {
+      if (moneda === 'cop') {
+        const tasa = typeof rateCOP !== 'undefined' ? rateCOP : 1;
+        wallet.cop -= (totalGasto * tasa);
+      } else {
+        wallet[moneda] -= totalGasto;
+      }
+    }
+
+    const item = {
+      id: uid(),
+      name: fd.get('name'),
+      qty: qty,
+      cost: cost,
+      ship: ship,
+      payMethod: fd.get('payMethod'),
+      payCurrency: moneda,
+      price: +fd.get('price'),
+      date: new Date().toISOString()
+    };
     acc.push(item);
-    closeModal(); await saveAll(); showToast('Accesorio agregado', true);
+    closeModal();
+    await saveAll();
+    showToast('Accesorio registrado y dinero descontado', true);
   };
 };
 
@@ -1558,10 +1658,35 @@ window.confirmDelete = (type, id) => {
     text: 'Podrás deshacerlo usando el botón "Deshacer" que aparecerá abajo.',
     confirmLabel: 'Sí, eliminar',
     onConfirm: async () => {
-      pushUndo('Eliminar · ' + name);
+      pushUndo('Eliminar ' + name);
+
+      // === NUEVO: REINTEGRAR DINERO A LA CAJA AL ELIMINAR ===
+      const moneda = item.payCurrency;
+      if (moneda && typeof wallet !== 'undefined' && wallet && wallet[moneda] !== undefined) {
+        let totalDevolver = 0;
+        
+        if (type === 'phone') {
+          // Si es teléfono: Costo base + Envío
+          totalDevolver = (item.cost || 0) + (item.ship || 0);
+        } else {
+          // Si es accesorio: (Costo unitario * cantidad) + Envío
+          totalDevolver = ((item.cost || 0) * (item.qty || 1)) + (item.ship || 0);
+        }
+
+        if (moneda === 'cop') {
+          const tasa = typeof rateCOP !== 'undefined' ? rateCOP : 1;
+          wallet.cop += (totalDevolver * tasa);
+        } else {
+          wallet[moneda] += totalDevolver;
+        }
+      }
+      // =======================================================
+
       if (type === 'phone') phones = phones.filter(x => x.id !== id);
       else                  acc    = acc.filter(x => x.id !== id);
-      await saveAll(); showToast('Eliminado · ' + name, true);
+      
+      await saveAll(); 
+      showToast('Eliminado y dinero devuelto a caja', true);
     }
   });
 };
