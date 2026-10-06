@@ -1208,7 +1208,7 @@ window.editPhone = id => {
 
     if (diferencia !== 0 && typeof wallet !== 'undefined' && wallet && wallet[moneda] !== undefined) {
       if (moneda === 'cop') {
-        const tasa = typeof rateCOP !== 'undefined' ? rateCOP : 1;
+        const tasa = wallet.rate || 1;
         wallet.cop -= (diferencia * tasa);
       } else {
         wallet[moneda] -= diferencia;
@@ -1273,7 +1273,7 @@ window.newPhone = () => {
 
     if (typeof wallet !== 'undefined' && wallet && wallet[moneda] !== undefined) {
       if (moneda === 'cop') {
-        const tasa = typeof rateCOP !== 'undefined' ? rateCOP : 1;
+        const tasa = wallet.rate || 1;
         wallet.cop -= (totalGasto * tasa);
       } else {
         wallet[moneda] -= totalGasto;
@@ -1351,7 +1351,7 @@ window.editAcc = id => {
 
     if (diferencia !== 0 && typeof wallet !== 'undefined' && wallet && wallet[moneda] !== undefined) {
       if (moneda === 'cop') {
-        const tasa = typeof rateCOP !== 'undefined' ? rateCOP : 1;
+        const tasa = wallet.rate || 1;
         wallet.cop -= (diferencia * tasa);
       } else {
         wallet[moneda] -= diferencia;
@@ -1414,7 +1414,7 @@ window.newAcc = () => {
 
     if (typeof wallet !== 'undefined' && wallet && wallet[moneda] !== undefined) {
       if (moneda === 'cop') {
-        const tasa = typeof rateCOP !== 'undefined' ? rateCOP : 1;
+        const tasa = wallet.rate || 1;
         wallet.cop -= (totalGasto * tasa);
       } else {
         wallet[moneda] -= totalGasto;
