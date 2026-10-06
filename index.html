@@ -1166,42 +1166,145 @@ function confirmDialog({ title, text, confirmLabel='Eliminar', onConfirm }){
 window.editPhone = id => {
   const p = phones.find(x => x.id === id);
   if (!p) return;
-  openModal(`${modalHeader('Editar equipo')}
-    <form id="fPhone" class="form-grid">
+  
+  openModal(`${modalHeader('Editar equipo')}`);
+  $('#fPhone').innerHTML = `
+    <form id="fPhoneInner" class="form-grid">
       <div class="field full"><label>Modelo y capacidad</label><input class="input" name="model" required value="${esc(p.model)}"></div>
       <div class="field full"><label>IMEI / Serial</label><input class="input" name="imei" required value="${esc(p.imei)}"></div>
       <div class="field"><label>Batería %</label><input class="input" name="bat" type="number" min="0" max="100" required value="${esc(p.bat)}"></div>
       <div class="field"><label>Notas</label><input class="input" name="notes" value="${esc(p.notes || '')}"></div>
-      <div class="field"><label>Costo (USD)</label><input class="input" name="cost" type="number" step="0.01" required value="${esc(p.cost)}"></div>
-      <div class="field"><label>Precio venta (USD)</label><input class="input" name="price" type="number" step="0.01" required value="${esc(p.price)}"></div>
+      <div class="field"><label>Costo equipo (USD)</label><input class="input" name="cost" type="number" step="0.01" required value="${esc(p.cost)}"></div>
+      <div class="field"><label>Costo envío (USD)</label><input class="input" name="ship" type="number" step="0.01" value="${esc(p.ship || 0)}"></div>
+      <div class="field"><label>Método de pago</label>
+        <select class="input" name="payMethod">
+          <option value="Binance" ${p.payMethod === 'Binance' ? 'selected' : ''}>Tarjeta Binance</option>
+          <option value="Zinli" ${p.payMethod === 'Zinli' ? 'selected' : ''}>Tarjeta Zinli</option>
+          <option value="Efectivo" ${p.payMethod === 'Efectivo' ? 'selected' : ''}>Efectivo Físico</option>
+        </select>
+      </div>
+      <div class="field"><label>Descontar de</label>
+        <select class="input" name="payCurrency">
+          <option value="usdt" ${p.payCurrency === 'usdt' ? 'selected' : ''}>USDT</option>
+          <option value="usd" ${p.payCurrency === 'usd' ? 'selected' : ''}>USD ($)</option>
+          <option value="zinli" ${p.payCurrency === 'zinli' ? 'selected' : ''}>Zinli</option>
+          <option value="cop" ${p.payCurrency === 'cop' ? 'selected' : ''}>COP (Pesos)</option>
+        </select>
+      </div>
+      <div class="field full"><label>Precio venta (USD)</label><input class="input" name="price" type="number" step="0.01" required value="${esc(p.price)}"></div>
       <div class="modal-foot full"><button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button><button type="submit" class="btn primary">Guardar cambios</button></div>
-    </form>`);
-  $('#fPhone').onsubmit = async e => {
+    </form>
+  `;
+
+  $('#fPhoneInner').onsubmit = async e => {
     e.preventDefault();
-    pushUndo('Editar equipo · ' + p.model);
+    pushUndo('Editar equipo ' + p.model);
     const fd = new FormData(e.target);
-    Object.assign(p, { model: fd.get('model'), imei: fd.get('imei'), bat: fd.get('bat'), notes: fd.get('notes'), cost: +fd.get('cost'), price: +fd.get('price') });
-    closeModal(); await saveAll(); showToast('Equipo actualizado', true);
+    
+    // Cálculos para ajustar el saldo en la billetera al editar
+    const costoAnteriorTotal = (p.cost || 0) + (p.ship || 0);
+    const nuevoCostoBase = +fd.get('cost');
+    const nuevoEnvio = +fd.get('ship');
+    const nuevoCostoTotal = nuevoCostoBase + nuevoEnvio;
+    const diferencia = nuevoCostoTotal - costoAnteriorTotal; // Si dio positivo, gastó más; si dio negativo, gastó menos.
+
+    const moneda = fd.get('payCurrency');
+
+    // Ajustar saldo según la diferencia
+    if (diferencia !== 0 && wallet && wallet[moneda] !== undefined) {
+      if (moneda === 'cop') {
+        const tasa = rateCOP || 1; 
+        wallet.cop -= (diferencia * tasa);
+      } else {
+        wallet[moneda] -= diferencia;
+      }
+    }
+
+    Object.assign(p, {
+      model: fd.get('model'),
+      imei: fd.get('imei'),
+      bat: fd.get('bat'),
+      notes: fd.get('notes'),
+      cost: nuevoCostoBase,
+      ship: nuevoEnvio,
+      payMethod: fd.get('payMethod'),
+      payCurrency: moneda,
+      price: +fd.get('price')
+    });
+
+    closeModal();
+    await saveAll();
+    showToast('Equipo actualizado y saldo ajustado', true);
   };
 };
 window.newPhone = () => {
-  openModal(`${modalHeader('Nuevo equipo')}
-    <form id="fPhone" class="form-grid">
+  openModal(`${modalHeader('Nuevo equipo')}`);
+  $('#fPhone').innerHTML = `
+    <form id="fPhoneInner" class="form-grid">
       <div class="field full"><label>Modelo y capacidad</label><input class="input" name="model" required placeholder="iPhone 13 128GB" autofocus></div>
       <div class="field full"><label>IMEI / Serial</label><input class="input" name="imei" required></div>
       <div class="field"><label>Batería %</label><input class="input" name="bat" type="number" min="0" max="100" required placeholder="100"></div>
       <div class="field"><label>Notas</label><input class="input" name="notes" placeholder="Opcional"></div>
-      <div class="field"><label>Costo (USD)</label><input class="input" name="cost" type="number" step="0.01" required placeholder="0.00"></div>
-      <div class="field"><label>Precio venta (USD)</label><input class="input" name="price" type="number" step="0.01" required placeholder="0.00"></div>
+      <div class="field"><label>Costo equipo (USD)</label><input class="input" name="cost" type="number" step="0.01" required placeholder="0.00"></div>
+      <div class="field"><label>Costo envío (USD)</label><input class="input" name="ship" type="number" step="0.01" value="0.00" placeholder="0.00"></div>
+      <div class="field"><label>Método de pago</label>
+        <select class="input" name="payMethod">
+          <option value="Binance">Tarjeta Binance</option>
+          <option value="Zinli">Tarjeta Zinli</option>
+          <option value="Efectivo">Efectivo Físico</option>
+        </select>
+      </div>
+      <div class="field"><label>Descontar de</label>
+        <select class="input" name="payCurrency">
+          <option value="usdt">USDT</option>
+          <option value="usd">USD ($)</option>
+          <option value="zinli">Zinli</option>
+          <option value="cop">COP (Pesos)</option>
+        </select>
+      </div>
+      <div class="field full"><label>Precio venta (USD)</label><input class="input" name="price" type="number" step="0.01" required placeholder="0.00"></div>
       <div class="modal-foot full"><button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button><button type="submit" class="btn primary">Guardar equipo</button></div>
-    </form>`);
-  $('#fPhone').onsubmit = async e => {
+    </form>
+  `;
+
+  $('#fPhoneInner').onsubmit = async e => {
     e.preventDefault();
     const fd = new FormData(e.target);
-    const item = { id: uid(), model: fd.get('model'), imei: fd.get('imei'), bat: fd.get('bat'), notes: fd.get('notes'), cost: +fd.get('cost'), price: +fd.get('price'), date: new Date().toISOString() };
-    pushUndo('Agregar equipo · ' + item.model);
+    const cost = +fd.get('cost');
+    const ship = +fd.get('ship') || 0;
+    const totalGasto = cost + ship;
+    const moneda = fd.get('payCurrency');
+
+    pushUndo('Agregar equipo ' + fd.get('model'));
+
+    // Descontar automáticamente de la caja/billetera seleccionada
+    if (wallet && wallet[moneda] !== undefined) {
+      if (moneda === 'cop') {
+        const tasa = rateCOP || 1;
+        wallet.cop -= (totalGasto * tasa);
+      } else {
+        wallet[moneda] -= totalGasto;
+      }
+    }
+
+    const item = {
+      id: uid(),
+      model: fd.get('model'),
+      imei: fd.get('imei'),
+      bat: fd.get('bat'),
+      notes: fd.get('notes'),
+      cost: cost,
+      ship: ship,
+      payMethod: fd.get('payMethod'),
+      payCurrency: moneda,
+      price: +fd.get('price'),
+      date: new Date().toISOString()
+    };
+
     phones.push(item);
-    closeModal(); await saveAll(); showToast('Equipo agregado al inventario', true);
+    closeModal();
+    await saveAll();
+    showToast('Equipo registrado y dinero descontado de caja', true);
   };
 };
 
