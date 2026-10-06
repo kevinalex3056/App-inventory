@@ -1757,18 +1757,15 @@ window.confirmDelete = (type, id) => {
           wallet[moneda] += totalDevolver;
         }
       }
-      }
-      // =======================================================
 
       if (type === 'phone') phones = phones.filter(x => x.id !== id);
       else                  acc    = acc.filter(x => x.id !== id);
-      
-      await saveAll(); 
+
+      await saveAll();
       showToast('Eliminado y dinero devuelto a caja', true);
     }
   });
 };
-
 window.undoSale = id => {
   const sale = hist.find(h => h.id === id);
   if (!sale) return;
