@@ -603,10 +603,10 @@ function calculateCapital(){
   const disponible = wallet.usd + wallet.usdt + wallet.zinli + eqCop;
 
   const accUnits = acc.reduce((s, a) => s + (+a.qty || 0), 0);
-  const accCost = acc.reduce((s, a) => s + ((+a.cost || 0) * (+a.qty || 0)), 0);
+  const accCost = acc.reduce((s, a) => s + ((+a.cost || 0) * (+a.qty || 0)) + (+a.ship || 0), 0);
 
   const phoneCount = phones.length;
-  const phonesCost = phones.reduce((s, p) => s + (+p.cost || 0), 0);
+  const phonesCost = phones.reduce((s, p) => s + (+p.cost || 0) + (+p.ship || 0), 0);
 
   return {
     disponible,
@@ -759,7 +759,7 @@ function updateHeaderSub(){
 function renderPhones(){
   let cost = 0, price = 0;
   const items = phones.filter(p => !searchQ || (p.model || '').toLowerCase().includes(searchQ) || (p.imei || '').toLowerCase().includes(searchQ));
-  items.forEach(p => { cost += +p.cost || 0; price += +p.price || 0; });
+ items.forEach(p => { cost += (+p.cost || 0) + (+p.ship || 0); price += +p.price || 0; });
   $('#dashGrid').innerHTML = `
     <div class="dash-card"><div class="lbl">${icon('box',11)} Inversión</div><div class="val">${fMoney(cost)}</div></div>
     <div class="dash-card"><div class="lbl">${icon('chart',11)} Proyectado</div><div class="val acc">${fMoney(price)}</div></div>
@@ -769,7 +769,8 @@ function renderPhones(){
     return;
   }
   $('#view-phones').innerHTML = items.map(p => {
-    const margin = (+p.price || 0) - (+p.cost || 0);
+    const totalCost = (+p.cost || 0) + (+p.ship || 0);
+const margin = (+p.price || 0) - totalCost;
     const lowBat = (+p.bat || 100) < 80;
     return `
       <div class="card">
@@ -783,7 +784,7 @@ function renderPhones(){
               <span class="badge neutral">${fmtDate(p.date)}</span>
             </div>
             <div class="meta-row">
-              <span>Costo<b>${fMoney(p.cost)}</b></span>
+              <span>Costo<b>${fMoney(totalCost)}</b></span>
               <span>Venta<b>${fMoney(p.price)}</b></span>
               <span>Margen<b class="${margin>=0?'pos':'neg'}">${margin>=0?'+':''}${fMoney(margin)}</b></span>
             </div>
@@ -801,7 +802,7 @@ function renderPhones(){
 function renderAcc(){
   let inv = 0;
   const items = acc.filter(a => !searchQ || a.name.toLowerCase().includes(searchQ));
-  items.forEach(a => inv += (+a.cost || 0) * (+a.qty || 0));
+  items.forEach(a => inv += ((+a.cost || 0) * (+a.qty || 0)) + (+a.ship || 0));
   $('#dashGrid').innerHTML = `<div class="dash-card wide" style="background:var(--green-bg);border-color:transparent">
     <div class="lbl" style="color:var(--green)">${icon('coins',12)} Valor inventario accesorios</div>
     <div class="val pos" style="font-size:22px;margin-top:6px">${fMoney(inv)}</div></div>`;
@@ -811,13 +812,14 @@ function renderAcc(){
   }
   $('#view-acc').innerHTML = items.map(a => {
     const low = a.qty <= (settings.lowStock || 2);
+    const totalCost = (+a.cost || 0) + (+a.ship || 0);
     return `
       <div class="card ${low ? 'warn' : ''}">
         <div class="row">
           <div class="thumb">${icon('plug', 20)}</div>
           <div class="info">
             <div class="title">${esc(a.name)}</div>
-            <div class="sub">Costo ${fMoney(a.cost)} · Venta ${fMoney(a.price)}</div>
+            <div class="sub">Costo ${fMoney(totalCost)} · Venta ${fMoney(a.price)}</div>
             <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px">
               <div class="stock">
                 <button onclick="modStock('${a.id}', -1)">${icon('x', 12, 2.5)}</button>
