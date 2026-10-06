@@ -831,9 +831,10 @@ function renderAcc(){
                 <button onclick="modStock('${a.id}', 1)">${icon('plus', 12, 2.5)}</button>
               </div>
               <div style="display:flex;gap:6px">
-                <button class="btn green sm" onclick="prepSell('acc','${a.id}')">${icon('tag',13)} Vender</button>
-                <button class="btn ghost sm" onclick="editAcc('${a.id}')" style="padding:0 10px">${icon('edit',13)}</button>
-              </div>
+  <button class="btn green sm" onclick="prepSell('acc','${a.id}')">${icon('tag',13)} Vender</button>
+  <button class="btn ghost sm" onclick="editAcc('${a.id}')" style="padding:0 10px">${icon('edit',13)}</button>
+  <button class="btn ghost sm" onclick="confirmDelete('acc','${a.id}')" style="padding:0 10px">${icon('trash',13)}</button>
+</div>
             </div>
             ${low ? `<div style="margin-top:10px"><span class="badge warn">${icon('alert',11)} Stock bajo</span></div>` : ''}
           </div>
@@ -1699,10 +1700,29 @@ window.modStock = async (id, delta) => {
   const a = acc.find(x => x.id === id);
   if (!a) return;
   if (a.qty + delta < 0) return;
+
   pushUndo('Stock · ' + a.name);
+
+  // Ajuste de dinero en caja según la moneda seleccionada
+  const moneda = a.payCurrency || 'usd';
+  const costoUnidad = +a.cost || 0;
+
+  if (costoUnidad > 0 && typeof wallet !== 'undefined' && wallet && wallet[moneda] !== undefined) {
+    if (delta > 0) {
+      // Si aumentas stock (+1), descuenta el costo de 1 unidad de la caja
+      if (moneda === 'cop') wallet.cop -= costoUnidad * (wallet.rate || 1);
+      else wallet[moneda] -= costoUnidad;
+    } else if (delta < 0) {
+      // Si reduces stock (-1), devuelve el costo de 1 unidad a la caja
+      if (moneda === 'cop') wallet.cop += costoUnidad * (wallet.rate || 1);
+      else wallet[moneda] += costoUnidad;
+    }
+  }
+
   a.qty += delta;
   await saveAll();
   if (undoStack.length > 30) undoStack.shift();
+  showToast(delta > 0 ? 'Stock aumentado y costo descontado' : 'Stock reducido y dinero devuelto a caja', true);
 };
 
 window.confirmDelete = (type, id) => {
@@ -1716,25 +1736,27 @@ window.confirmDelete = (type, id) => {
     onConfirm: async () => {
       pushUndo('Eliminar ' + name);
 
-      // === NUEVO: REINTEGRAR DINERO A LA CAJA AL ELIMINAR ===
-      const moneda = item.payCurrency;
-      if (moneda && typeof wallet !== 'undefined' && wallet && wallet[moneda] !== undefined) {
+      // === REINTEGRAR DINERO A LA CAJA AL ELIMINAR ===
+      const moneda = item.payCurrency || 'usd';
+      if (wallet && wallet[moneda] !== undefined) {
         let totalDevolver = 0;
-        
+        // Solo devuelve el valor del envío si NO estaba pendiente
+        const envioPagado = item.shipStatus === 'pendiente' ? 0 : (+item.ship || 0);
+
         if (type === 'phone') {
-          // Si es teléfono: Costo base + Envío
-          totalDevolver = (item.cost || 0) + (item.ship || 0);
+          totalDevolver = (+item.cost || 0) + envioPagado;
         } else {
-          // Si es accesorio: (Costo unitario * cantidad) + Envío
-          totalDevolver = ((item.cost || 0) * (item.qty || 1)) + (item.ship || 0);
+          // Devuelve el costo total del stock actual de accesorios + envío pagado
+          totalDevolver = ((+item.cost || 0) * (+item.qty || 0)) + envioPagado;
         }
 
         if (moneda === 'cop') {
-          const tasa = typeof rateCOP !== 'undefined' ? rateCOP : 1;
+          const tasa = wallet.rate || 1;
           wallet.cop += (totalDevolver * tasa);
         } else {
           wallet[moneda] += totalDevolver;
         }
+      }
       }
       // =======================================================
 
