@@ -782,6 +782,7 @@ const margin = (+p.price || 0) - totalCost;
             <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
               <span class="badge ${lowBat?'warn':''}">${esc(p.bat)}% batería</span>
               <span class="badge neutral">${fmtDate(p.date)}</span>
+              ${p.shipStatus === 'pendiente' ? '<span class="badge warn">Envío pendiente</span>' : ''}
             </div>
             <div class="meta-row">
               <span>Costo<b>${fMoney(totalCost)}</b></span>
@@ -819,7 +820,10 @@ function renderAcc(){
           <div class="thumb">${icon('plug', 20)}</div>
           <div class="info">
             <div class="title">${esc(a.name)}</div>
-            <div class="sub">Costo ${fMoney(totalCost)} · Venta ${fMoney(a.price)}</div>
+            <div class="sub">
+  Costo ${fMoney(totalCost)} · Venta ${fMoney(a.price)}
+  ${a.shipStatus === 'pendiente' ? ' · <span style="color:var(--amber);font-weight:bold;">(Envío por cancelar)</span>' : ''}
+</div>
             <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px">
               <div class="stock">
                 <button onclick="modStock('${a.id}', -1)">${icon('x', 12, 2.5)}</button>
@@ -1177,6 +1181,13 @@ window.editPhone = id => {
       <div class="field"><label>Notas</label><input class="input" name="notes" value="${esc(p.notes || '')}"></div>
       <div class="field"><label>Costo equipo (USD)</label><input class="input" name="cost" type="number" step="0.01" required value="${esc(p.cost)}"></div>
       <div class="field"><label>Costo envío (USD)</label><input class="input" name="ship" type="number" step="0.01" value="${esc(p.ship || 0)}"></div>
+      <div class="field">
+  <label>Estado del Envío</label>
+  <select class="input" name="shipStatus">
+    <option value="pagado" ${p.shipStatus === 'pendiente' ? '' : 'selected'}>Pagado</option>
+    <option value="pendiente" ${p.shipStatus === 'pendiente' ? 'selected' : ''}>Por cancelar</option>
+  </select>
+</div>
       <div class="field"><label>Método de pago</label>
         <select class="input" name="payMethod">
           <option value="Binance" ${p.payMethod === 'Binance' ? 'selected' : ''}>Tarjeta Binance</option>
@@ -1201,12 +1212,21 @@ window.editPhone = id => {
     pushUndo('Editar equipo ' + p.model);
     const fd = new FormData(e.target);
 
-    const costoAnteriorTotal = (p.cost || 0) + (p.ship || 0);
-    const nuevoCostoBase = +fd.get('cost');
-    const nuevoEnvio = +fd.get('ship');
-    const nuevoCostoTotal = nuevoCostoBase + nuevoEnvio;
-    const diferencia = nuevoCostoTotal - costoAnteriorTotal;
-    const moneda = fd.get('payCurrency');
+    // Evaluar cuánto dinero realmente salió de la caja anteriormente
+const envioAnteriorPagado = p.shipStatus === 'pendiente' ? 0 : (p.ship || 0);
+const costoAnteriorTotal = (p.cost || 0) + envioAnteriorPagado;
+
+const nuevoCostoBase = +fd.get('cost');
+const nuevoEnvio = +fd.get('ship');
+const nuevoShipStatus = fd.get('shipStatus') || 'pagado';
+
+// Evaluar cuánto dinero debe salir de la caja ahora
+const nuevoEnvioPagado = nuevoShipStatus === 'pendiente' ? 0 : nuevoEnvio;
+const nuevoCostoTotal = nuevoCostoBase + nuevoEnvioPagado;
+
+// La diferencia ajusta la caja de forma exacta
+const diferencia = nuevoCostoTotal - costoAnteriorTotal;
+const moneda = fd.get('payCurrency');
 
     if (diferencia !== 0 && typeof wallet !== 'undefined' && wallet && wallet[moneda] !== undefined) {
       if (moneda === 'cop') {
@@ -1224,6 +1244,7 @@ window.editPhone = id => {
       notes: fd.get('notes'),
       cost: nuevoCostoBase,
       ship: nuevoEnvio,
+      shipStatus: nuevoShipStatus,
       payMethod: fd.get('payMethod'),
       payCurrency: moneda,
       price: +fd.get('price')
@@ -1244,6 +1265,13 @@ window.newPhone = () => {
       <div class="field"><label>Notas</label><input class="input" name="notes" placeholder="Opcional"></div>
       <div class="field"><label>Costo equipo (USD)</label><input class="input" name="cost" type="number" step="0.01" required placeholder="0.00"></div>
       <div class="field"><label>Costo envío (USD)</label><input class="input" name="ship" type="number" step="0.01" value="0.00" placeholder="0.00"></div>
+      <div class="field">
+  <label>Estado del Envío</label>
+  <select class="input" name="shipStatus">
+    <option value="pagado">Pagado</option>
+    <option value="pendiente">Por cancelar</option>
+  </select>
+</div>
       <div class="field"><label>Método de pago</label>
         <select class="input" name="payMethod">
           <option value="Binance">Tarjeta Binance</option>
@@ -1268,7 +1296,9 @@ window.newPhone = () => {
     const fd = new FormData(e.target);
     const cost = +fd.get('cost');
     const ship = +fd.get('ship') || 0;
-    const totalGasto = cost + ship;
+const shipStatus = fd.get('shipStatus') || 'pagado';
+// Si el envío está pendiente, no sale ese dinero de la caja
+const totalGasto = cost + (shipStatus === 'pagado' ? ship : 0);
     const moneda = fd.get('payCurrency');
 
     pushUndo('Agregar equipo ' + fd.get('model'));
@@ -1290,6 +1320,7 @@ window.newPhone = () => {
       notes: fd.get('notes'),
       cost: cost,
       ship: ship,
+      shipStatus: shipStatus,
       payMethod: fd.get('payMethod'),
       payCurrency: moneda,
       price: +fd.get('price'),
@@ -1313,6 +1344,13 @@ window.editAcc = id => {
       <div class="field full"><label>Cantidad en stock</label><input class="input" name="qty" type="number" min="0" required value="${esc(a.qty)}"></div>
       <div class="field"><label>Costo unitario (USD)</label><input class="input" name="cost" type="number" step="0.01" required value="${esc(a.cost)}"></div>
       <div class="field"><label>Costo envío total (USD)</label><input class="input" name="ship" type="number" step="0.01" value="${esc(a.ship || 0)}"></div>
+      <div class="field">
+  <label>Estado del Envío</label>
+  <select class="input" name="shipStatus">
+    <option value="pagado" ${a.shipStatus === 'pendiente' ? '' : 'selected'}>Pagado</option>
+    <option value="pendiente" ${a.shipStatus === 'pendiente' ? 'selected' : ''}>Por cancelar</option>
+  </select>
+</div>
       <div class="field"><label>Método de pago</label>
         <select class="input" name="payMethod">
           <option value="Binance" ${a.payMethod === 'Binance' ? 'selected' : ''}>Tarjeta Binance</option>
@@ -1338,15 +1376,20 @@ window.editAcc = id => {
     const fd = new FormData(e.target);
 
     // Calcular diferencias para devolver o quitar saldo si cambian costos/cantidades
-    const qtyAnterior = a.qty || 0;
-    const costoAnterior = a.cost || 0;
-    const envioAnterior = a.ship || 0;
-    const costoAnteriorTotal = (costoAnterior * qtyAnterior) + envioAnterior;
+    // Evaluar el dinero que realmente salió de la caja anteriormente
+const qtyAnterior = a.qty || 0;
+const costoAnterior = a.cost || 0;
+const envioAnteriorPagado = a.shipStatus === 'pendiente' ? 0 : (a.ship || 0);
+const costoAnteriorTotal = (costoAnterior * qtyAnterior) + envioAnteriorPagado;
 
-    const nuevaQty = +fd.get('qty');
-    const nuevoCostoUnitario = +fd.get('cost');
-    const nuevoEnvio = +fd.get('ship') || 0;
-    const nuevoCostoTotal = (nuevoCostoUnitario * nuevaQty) + nuevoEnvio;
+const nuevaQty = +fd.get('qty');
+const nuevoCostoUnitario = +fd.get('cost');
+const nuevoEnvio = +fd.get('ship') || 0;
+const nuevoShipStatus = fd.get('shipStatus') || 'pagado';
+
+// Evaluar el dinero que debe salir de la caja con los nuevos datos
+const nuevoEnvioPagado = nuevoShipStatus === 'pendiente' ? 0 : nuevoEnvio;
+const nuevoCostoTotal = (nuevoCostoUnitario * nuevaQty) + nuevoEnvioPagado;
 
     const diferencia = nuevoCostoTotal - costoAnteriorTotal;
     const moneda = fd.get('payCurrency');
@@ -1365,6 +1408,7 @@ window.editAcc = id => {
       qty: nuevaQty,
       cost: nuevoCostoUnitario,
       ship: nuevoEnvio,
+      shipStatus: nuevoShipStatus,
       payMethod: fd.get('payMethod'),
       payCurrency: moneda,
       price: +fd.get('price')
@@ -1382,6 +1426,13 @@ window.newAcc = () => {
       <div class="field full"><label>Cantidad en stock</label><input class="input" name="qty" type="number" min="1" required placeholder="10"></div>
       <div class="field"><label>Costo unitario (USD)</label><input class="input" name="cost" type="number" step="0.01" required placeholder="0.00"></div>
       <div class="field"><label>Costo envío total (USD)</label><input class="input" name="ship" type="number" step="0.01" value="0.00"></div>
+      <div class="field">
+  <label>Estado del Envío</label>
+  <select class="input" name="shipStatus">
+    <option value="pagado">Pagado</option>
+    <option value="pendiente">Por cancelar</option>
+  </select>
+</div>
       <div class="field"><label>Método de pago</label>
         <select class="input" name="payMethod">
           <option value="Binance">Tarjeta Binance</option>
@@ -1407,9 +1458,11 @@ window.newAcc = () => {
     const qty = +fd.get('qty');
     const cost = +fd.get('cost');
     const ship = +fd.get('ship') || 0;
-    
-    // El gasto total es (Costo unitario * cantidad) + Envío
-    const totalGasto = (cost * qty) + ship;
+const shipStatus = fd.get('shipStatus') || 'pagado';
+
+// Si el envío está pendiente, no sale ese dinero de la caja
+const envioPagado = shipStatus === 'pendiente' ? 0 : ship;
+const totalGasto = (cost * qty) + envioPagado;
     const moneda = fd.get('payCurrency');
 
     pushUndo('Agregar accesorio ' + fd.get('name'));
@@ -1429,6 +1482,7 @@ window.newAcc = () => {
       qty: qty,
       cost: cost,
       ship: ship,
+      shipStatus: shipStatus,
       payMethod: fd.get('payMethod'),
       payCurrency: moneda,
       price: +fd.get('price'),
