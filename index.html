@@ -516,8 +516,15 @@ let capitalExpanded = false;   /* ⭐ Estado del desglose de capital */
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const uid = () => Date.now() + Math.random().toString(36).slice(2,7);
-const fMoney = (n, sym = '$') => sym + (parseFloat(n)||0).toLocaleString('en-US', { maximumFractionDigits:2 });
-const fNum = n => (parseFloat(n)||0).toLocaleString('en-US', { maximumFractionDigits:4 });
+  const parseNum = (val) => {
+  if (val === null || val === undefined || val === '') return 0;
+  if (typeof val === 'number') return isNaN(val) ? 0 : val;
+  const cleanStr = String(val).replace(',', '.').trim();
+  const num = parseFloat(cleanStr);
+  return isNaN(num) ? 0 : num;
+};
+const fMoney = (n, sym = '$') => sym + parseNum(n).toLocaleString('en-US', { maximumFractionDigits:2 });
+const fNum = n => parseNum(n).toLocaleString('en-US', { maximumFractionDigits:4 });
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate = d => new Date(d).toLocaleDateString('es', { day:'2-digit', month:'short', year:'numeric' });
 
@@ -599,14 +606,14 @@ function calcConvert(from, to, amount){
    - Equipos: suma de costos de cada teléfono en stock
 ============================================================ */
 function calculateCapital(){
-  const eqCop = wallet.rate ? (wallet.cop / wallet.rate) : 0;
-  const disponible = wallet.usd + wallet.usdt + wallet.zinli + eqCop;
+  const eqCop = wallet.rate ? (parseNum(wallet.cop) / parseNum(wallet.rate || 1)) : 0;
+const disponible = parseNum(wallet.usd) + parseNum(wallet.usdt) + parseNum(wallet.zinli) + eqCop;
 
-  const accUnits = acc.reduce((s, a) => s + (+a.qty || 0), 0);
-  const accCost = acc.reduce((s, a) => s + ((+a.cost || 0) * (+a.qty || 0)) + (+a.ship || 0), 0);
+  const accUnits = acc.reduce((s, a) => s + parseNum(a.qty), 0);
+  const accCost = acc.reduce((s, a) => s + (parseNum(a.cost) * parseNum(a.qty)) + parseNum(a.ship), 0);
 
   const phoneCount = phones.length;
-  const phonesCost = phones.reduce((s, p) => s + (+p.cost || 0) + (+p.ship || 0), 0);
+  const phonesCost = phones.reduce((s, p) => s + parseNum(p.cost) + parseNum(p.ship), 0);
 
   return {
     disponible,
@@ -767,7 +774,7 @@ function renderPhones(){
            (p.notes || '').toLowerCase().includes(q) ||
            (p.shipStatus || '').toLowerCase().includes(q);
   });
- items.forEach(p => { cost += (+p.cost || 0) + (+p.ship || 0); price += +p.price || 0; });
+ items.forEach(p => { cost += parseNum(p.cost) + parseNum(p.ship); price += parseNum(p.price); });
   $('#dashGrid').innerHTML = `
     <div class="dash-card"><div class="lbl">${icon('box',11)} Inversión</div><div class="val">${fMoney(cost)}</div></div>
     <div class="dash-card"><div class="lbl">${icon('chart',11)} Proyectado</div><div class="val acc">${fMoney(price)}</div></div>
@@ -777,8 +784,8 @@ function renderPhones(){
     return;
   }
   $('#view-phones').innerHTML = items.map(p => {
-    const totalCost = (+p.cost || 0) + (+p.ship || 0);
-const margin = (+p.price || 0) - totalCost;
+    const totalCost = parseNum(p.cost) + parseNum(p.ship);
+const margin = parseNum(p.price) - totalCost;
     const lowBat = (+p.bat || 100) < 80;
     return `
       <div class="card">
@@ -818,7 +825,7 @@ function renderAcc(){
            (a.notes || '').toLowerCase().includes(q) ||
            (a.shipStatus || '').toLowerCase().includes(q);
   });
-  items.forEach(a => inv += ((+a.cost || 0) * (+a.qty || 0)) + (+a.ship || 0));
+  items.forEach(a => inv += (parseNum(a.cost) * parseNum(a.qty)) + parseNum(a.ship));
   $('#dashGrid').innerHTML = `<div class="dash-card wide" style="background:var(--green-bg);border-color:transparent">
     <div class="lbl" style="color:var(--green)">${icon('coins',12)} Valor inventario accesorios</div>
     <div class="val pos" style="font-size:22px;margin-top:6px">${fMoney(inv)}</div></div>`;
@@ -828,7 +835,7 @@ function renderAcc(){
   }
   $('#view-acc').innerHTML = items.map(a => {
     const low = a.qty <= (settings.lowStock || 2);
-    const totalCost = (+a.cost || 0) + (+a.ship || 0);
+    const totalCost = parseNum(a.cost) + parseNum(a.ship);
     return `
       <div class="card ${low ? 'warn' : ''}">
         <div class="row">
@@ -1242,11 +1249,11 @@ window.editPhone = id => {
     const fd = new FormData(e.target);
 
     // Evaluar cuánto dinero realmente salió de la caja anteriormente
-const envioAnteriorPagado = p.shipStatus === 'pendiente' ? 0 : (p.ship || 0);
-const costoAnteriorTotal = (p.cost || 0) + envioAnteriorPagado;
+const envioAnteriorPagado = p.shipStatus === 'pendiente' ? 0 : parseNum(p.ship);
+const costoAnteriorTotal = parseNum(p.cost) + envioAnteriorPagado;
 
-const nuevoCostoBase = +fd.get('cost');
-const nuevoEnvio = +fd.get('ship');
+const nuevoCostoBase = parseNum(fd.get('cost'));
+const nuevoEnvio = parseNum(fd.get('ship'));
 const nuevoShipStatus = fd.get('shipStatus') || 'pagado';
 
 // Evaluar cuánto dinero debe salir de la caja ahora
@@ -1276,7 +1283,7 @@ const moneda = fd.get('payCurrency');
       shipStatus: nuevoShipStatus,
       payMethod: fd.get('payMethod'),
       payCurrency: moneda,
-      price: +fd.get('price')
+      price: parseNum(fd.get('price'))
     });
 
     closeModal();
@@ -1323,8 +1330,8 @@ window.newPhone = () => {
   $('#fPhone').onsubmit = async e => {
     e.preventDefault();
     const fd = new FormData(e.target);
-    const cost = +fd.get('cost');
-    const ship = +fd.get('ship') || 0;
+    const cost = parseNum(fd.get('cost'));
+const ship = parseNum(fd.get('ship'));
 const shipStatus = fd.get('shipStatus') || 'pagado';
 // Si el envío está pendiente, no sale ese dinero de la caja
 const totalGasto = cost + (shipStatus === 'pagado' ? ship : 0);
@@ -1352,7 +1359,7 @@ const totalGasto = cost + (shipStatus === 'pagado' ? ship : 0);
       shipStatus: shipStatus,
       payMethod: fd.get('payMethod'),
       payCurrency: moneda,
-      price: +fd.get('price'),
+      price: parseNum(fd.get('price')),
       date: new Date().toISOString()
     };
 
@@ -1406,14 +1413,14 @@ window.editAcc = id => {
 
     // Calcular diferencias para devolver o quitar saldo si cambian costos/cantidades
     // Evaluar el dinero que realmente salió de la caja anteriormente
-const qtyAnterior = a.qty || 0;
-const costoAnterior = a.cost || 0;
-const envioAnteriorPagado = a.shipStatus === 'pendiente' ? 0 : (a.ship || 0);
+const qtyAnterior = parseNum(a.qty);
+const costoAnterior = parseNum(a.cost);
+const envioAnteriorPagado = a.shipStatus === 'pendiente' ? 0 : parseNum(a.ship);
 const costoAnteriorTotal = (costoAnterior * qtyAnterior) + envioAnteriorPagado;
 
-const nuevaQty = +fd.get('qty');
-const nuevoCostoUnitario = +fd.get('cost');
-const nuevoEnvio = +fd.get('ship') || 0;
+const nuevaQty = parseNum(fd.get('qty'));
+const nuevoCostoUnitario = parseNum(fd.get('cost'));
+const nuevoEnvio = parseNum(fd.get('ship'));
 const nuevoShipStatus = fd.get('shipStatus') || 'pagado';
 
 // Evaluar el dinero que debe salir de la caja con los nuevos datos
@@ -1440,7 +1447,7 @@ const nuevoCostoTotal = (nuevoCostoUnitario * nuevaQty) + nuevoEnvioPagado;
       shipStatus: nuevoShipStatus,
       payMethod: fd.get('payMethod'),
       payCurrency: moneda,
-      price: +fd.get('price')
+      price: parseNum(fd.get('price'))
     });
 
     closeModal();
@@ -1484,9 +1491,9 @@ window.newAcc = () => {
   $('#fAcc').onsubmit = async e => {
     e.preventDefault();
     const fd = new FormData(e.target);
-    const qty = +fd.get('qty');
-    const cost = +fd.get('cost');
-    const ship = +fd.get('ship') || 0;
+    const qty = parseNum(fd.get('qty'));
+const cost = parseNum(fd.get('cost'));
+const ship = parseNum(fd.get('ship'));
 const shipStatus = fd.get('shipStatus') || 'pagado';
 
 // Si el envío está pendiente, no sale ese dinero de la caja
@@ -1514,7 +1521,7 @@ const totalGasto = (cost * qty) + envioPagado;
       shipStatus: shipStatus,
       payMethod: fd.get('payMethod'),
       payCurrency: moneda,
-      price: +fd.get('price'),
+      price: parseNum(fd.get('price'))
       date: new Date().toISOString()
     };
     acc.push(item);
@@ -1733,7 +1740,7 @@ window.modStock = async (id, delta) => {
 
   // Ajuste de dinero en caja según la moneda seleccionada
   const moneda = a.payCurrency || 'usd';
-  const costoUnidad = +a.cost || 0;
+  const costoUnidad = parseNum(a.cost);
 
   if (costoUnidad > 0 && typeof wallet !== 'undefined' && wallet && wallet[moneda] !== undefined) {
     if (delta > 0) {
@@ -1768,7 +1775,7 @@ window.payShip = (type, id) => {
   if (!item || item.shipStatus !== 'pendiente') return;
 
   const name = item.model || item.name;
-  const shipCost = +item.ship || 0;
+  const shipCost = parseNum(item.ship);
   const moneda = item.payCurrency || 'usd';
 
   confirmDialog({
@@ -1821,13 +1828,13 @@ window.confirmDelete = (type, id) => {
       if (wallet && wallet[moneda] !== undefined) {
         let totalDevolver = 0;
         // Solo devuelve el valor del envío si NO estaba pendiente
-        const envioPagado = item.shipStatus === 'pendiente' ? 0 : (+item.ship || 0);
+        const envioPagado = item.shipStatus === 'pendiente' ? 0 : parseNum(item.ship);
 
         if (type === 'phone') {
-          totalDevolver = (+item.cost || 0) + envioPagado;
+          totalDevolver = parseNum(item.cost) + envioPagado;
         } else {
           // Devuelve el costo total del stock actual de accesorios + envío pagado
-          totalDevolver = ((+item.cost || 0) * (+item.qty || 0)) + envioPagado;
+          totalDevolver = (parseNum(item.cost) * parseNum(item.qty)) + envioPagado;
         }
 
         if (moneda === 'cop') {
