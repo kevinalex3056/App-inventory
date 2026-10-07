@@ -1521,7 +1521,7 @@ const totalGasto = (cost * qty) + envioPagado;
       shipStatus: shipStatus,
       payMethod: fd.get('payMethod'),
       payCurrency: moneda,
-      price: parseNum(fd.get('price'))
+      price: parseNum(fd.get('price')),
       date: new Date().toISOString()
     };
     acc.push(item);
