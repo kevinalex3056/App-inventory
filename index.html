@@ -643,9 +643,23 @@ async function undoLast(){
   const entry = undoStack.pop();
   if (!entry){ showToast('No hay cambios que deshacer'); return; }
   const s = entry.snapshot;
-  phones = s.phones; acc = s.acc; hist = s.hist; movs = s.movs; wallet = s.wallet;
+  phones = s.phones; 
+  acc = s.acc; 
+  hist = s.hist; 
+  movs = s.movs; 
+  wallet = s.wallet;
+
   await saveAll();
-  showToast('Deshecho · ' + entry.label);
+  
+  // Re-renderizar pantallas
+  if (typeof renderAll === 'function') renderAll();
+  else {
+    if (typeof renderPhones === 'function') renderPhones();
+    if (typeof renderAcc === 'function') renderAcc();
+    if (typeof renderWallet === 'function') renderWallet();
+  }
+
+  showToast('Deshecho: ' + entry.label);
 }
 
 let toastTimers = new WeakMap();
@@ -1734,54 +1748,64 @@ window.newTransfer = (fromPreset, toPreset) => {
 window.modStock = async (id, delta) => {
   const a = acc.find(x => x.id === id);
   if (!a) return;
-  if (a.qty + delta < 0) return;
+  if ((a.qty + delta) < 0) return;
 
   pushUndo('Stock · ' + a.name);
 
-  // Ajuste de dinero en caja según la moneda seleccionada
+  // 1. Aplicar el cambio a la cantidad del inventario
+  a.qty += delta;
+
+  // 2. Ajuste de dinero en caja según la moneda seleccionada
   const moneda = a.payCurrency || 'usd';
   const costoUnidad = parseNum(a.cost);
 
   if (costoUnidad > 0 && typeof wallet !== 'undefined' && wallet && wallet[moneda] !== undefined) {
     if (delta > 0) {
-      // Si aumentas stock (+1), descuenta el costo de 1 unidad de la caja
+      // Si aumentas stock (+1), descuenta el costo de la caja
       if (moneda === 'cop') wallet.cop -= costoUnidad * (wallet.rate || 1);
       else wallet[moneda] -= costoUnidad;
     } else if (delta < 0) {
-      // Si reduces stock (-1), devuelve el costo de 1 unidad a la caja
+      // Si reduces stock (-1), devuelve el costo a la caja
       if (moneda === 'cop') wallet.cop += costoUnidad * (wallet.rate || 1);
       else wallet[moneda] += costoUnidad;
     }
   }
-    // Registrar ajuste de stock en el historial de caja
-    if (costoUnidad > 0 && typeof movs !== 'undefined') {
+
+  // 3. Registrar en Movimientos Recientes guardando la cantidad modificada (qtyChange)
+  if (costoUnidad > 0 && typeof movs !== 'undefined') {
     movs.push({
-  id: typeof uid === 'function' ? uid() : Date.now().toString(),
-  type: delta > 0 ? 'gasto' : 'ingreso',
-  cat: 'Ajuste Stock',
-  desc: 'Ajuste stock ' + (delta > 0 ? '+' : '') + delta + ': ' + a.name,
-  amt: costoUnidad,
-  amount: costoUnidad,
-  acc: moneda,
-  currency: moneda,
-  date: new Date().toISOString()
-});
-    }
-  a.qty += delta;
+      id: typeof uid === 'function' ? uid() : Date.now().toString(),
+      type: delta > 0 ? 'gasto' : 'ingreso',
+      cat: 'Ajuste Stock',
+      desc: 'Ajuste stock ' + (delta > 0 ? '+' : '') + delta + ': ' + a.name,
+      amt: costoUnidad * Math.abs(delta),
+      amount: costoUnidad * Math.abs(delta),
+      acc: moneda,
+      currency: moneda,
+      itemId: a.id,        // ID del producto vinculado
+      itemType: 'acc',     // Tipo de producto
+      qtyChange: delta,    // <--- Guarda las unidades sumadas/restadas (+1 o -1)
+      date: new Date().toISOString()
+    });
+  }
+
   await saveAll();
-  if (undoStack.length > 30) undoStack.shift();
+  if (typeof renderAll === 'function') renderAll();
+  else {
+    if (typeof renderAcc === 'function') renderAcc();
+    if (typeof renderWallet === 'function') renderWallet();
+  }
+
   showToast(delta > 0 ? 'Stock aumentado y costo descontado' : 'Stock reducido y dinero devuelto a caja', true);
 };
 window.payShip = (type, id) => {
-  const item = type === 'phone' ? phones.find(x => x.id === id) : acc.find(x => x.id === id);
+  const isPhone = type === 'phone';
+  const item = isPhone ? phones.find(x => x.id === id) : acc.find(x => x.id === id);
   if (!item || item.shipStatus !== 'pendiente') return;
 
   const name = item.model || item.name;
   const shipCost = parseNum(item.ship);
-  if (shipCost <= 0) {
-  showToast('El costo de envío es $0. Edita el producto para asignarle un valor.', false);
-  return;
-}
+  if (shipCost <= 0) return showToast('El costo de envío es $0', false);
   const moneda = item.payCurrency || 'usd';
 
   confirmDialog({
@@ -1792,88 +1816,91 @@ window.payShip = (type, id) => {
       pushUndo('Pagar envío · ' + name);
 
       if (wallet && wallet[moneda] !== undefined) {
-        if (moneda === 'cop') {
-          wallet.cop -= shipCost * (wallet.rate || 1);
-        } else {
-          wallet[moneda] -= shipCost;
-        }
+        if (moneda === 'cop') wallet.cop -= shipCost * (wallet.rate || 1);
+        else wallet[moneda] -= shipCost;
       }
 
       item.shipStatus = 'pagado';
-            // Registrar egreso por pago de envío
+
       if (typeof movs !== 'undefined') {
         movs.push({
-  id: typeof uid === 'function' ? uid() : Date.now().toString(),
-  type: 'gasto',
-  cat: 'Envío',
-  desc: 'Pago envío pendiente: ' + name,
-  amt: shipCost,
-  amount: shipCost,
-  acc: moneda,
-  currency: moneda,
-  date: new Date().toISOString()
-});
+          id: typeof uid === 'function' ? uid() : Date.now().toString(),
+          type: 'gasto',
+          cat: 'Envío',
+          desc: 'Pago envío pendiente: ' + name,
+          amt: shipCost,
+          amount: shipCost,
+          acc: moneda,
+          currency: moneda,
+          itemId: item.id,      // <--- Guarda ID del producto
+          itemType: type,       // <--- Guarda 'phone' o 'acc'
+          date: new Date().toISOString()
+        });
       }
+
       await saveAll();
-      if (typeof renderPhones === 'function') renderPhones();
-if (typeof renderAcc === 'function') renderAcc();
-if (typeof renderWallet === 'function') renderWallet();
-      showToast('Envío de ' + name + ' pagado y descontado de caja', true);
+      if (typeof renderAll === 'function') renderAll();
+      else {
+        if (typeof renderPhones === 'function') renderPhones();
+        if (typeof renderAcc === 'function') renderAcc();
+        if (typeof renderWallet === 'function') renderWallet();
+      }
+      showToast('Envío de ' + name + ' pagado', true);
     }
   });
 };
   
 window.confirmDelete = (type, id) => {
-  const item = type === 'phone' ? phones.find(x => x.id === id) : acc.find(x => x.id === id);
+  const isPhone = type === 'phone';
+  const item = isPhone ? phones.find(x => x.id === id) : acc.find(x => x.id === id);
   if (!item) return;
   const name = item.model || item.name;
+
   confirmDialog({
     title: '¿Eliminar ' + name + '?',
-    text: 'Podrás deshacerlo usando el botón "Deshacer" que aparecerá abajo.',
+    text: 'Se eliminará del inventario y el costo se reembolsará a la caja.',
     confirmLabel: 'Sí, eliminar',
     onConfirm: async () => {
       pushUndo('Eliminar ' + name);
 
-      // === REINTEGRAR DINERO A LA CAJA AL ELIMINAR ===
       const moneda = item.payCurrency || 'usd';
+      let totalDevolver = 0;
+
       if (wallet && wallet[moneda] !== undefined) {
-        let totalDevolver = 0;
-        // Solo devuelve el valor del envío si NO estaba pendiente
         const envioPagado = item.shipStatus === 'pendiente' ? 0 : parseNum(item.ship);
+        totalDevolver = isPhone 
+          ? (parseNum(item.cost) + envioPagado)
+          : ((parseNum(item.cost) * parseNum(item.qty)) + envioPagado);
 
-        if (type === 'phone') {
-          totalDevolver = parseNum(item.cost) + envioPagado;
-        } else {
-          // Devuelve el costo total del stock actual de accesorios + envío pagado
-          totalDevolver = (parseNum(item.cost) * parseNum(item.qty)) + envioPagado;
-        }
-
-        if (moneda === 'cop') {
-          const tasa = wallet.rate || 1;
-          wallet.cop += (totalDevolver * tasa);
-        } else {
-          wallet[moneda] += totalDevolver;
-        }
+        if (moneda === 'cop') wallet.cop += (totalDevolver * (wallet.rate || 1));
+        else wallet[moneda] += totalDevolver;
       }
 
-      if (type === 'phone') phones = phones.filter(x => x.id !== id);
-      else                  acc    = acc.filter(x => x.id !== id);
-      // Registrar reintegro a la caja por eliminación
+      if (isPhone) phones = phones.filter(x => x.id !== id);
+      else acc = acc.filter(x => x.id !== id);
+
+      // Registrar movimiento de reintegro en Caja
       if (totalDevolver > 0 && typeof movs !== 'undefined') {
         movs.push({
-  id: typeof uid === 'function' ? uid() : Date.now().toString(),
-  type: 'ingreso',
-  cat: 'Reintegro',
-  desc: 'Reintegro por eliminación: ' + name,
-  amt: totalDevolver,
-  amount: totalDevolver,
-  acc: moneda,
-  currency: moneda,
-  date: new Date().toISOString()
-});
+          id: typeof uid === 'function' ? uid() : Date.now().toString(),
+          type: 'ingreso',
+          cat: 'Reintegro',
+          desc: 'Reintegro por eliminación: ' + name,
+          amt: totalDevolver,
+          amount: totalDevolver,
+          acc: moneda,
+          currency: moneda,
+          date: new Date().toISOString()
+        });
       }
-      
+
       await saveAll();
+      if (typeof renderAll === 'function') renderAll();
+      else {
+        if (typeof renderPhones === 'function') renderPhones();
+        if (typeof renderAcc === 'function') renderAcc();
+        if (typeof renderWallet === 'function') renderWallet();
+      }
       showToast('Eliminado y dinero devuelto a caja', true);
     }
   });
@@ -1905,22 +1932,61 @@ window.undoMove = id => {
   const m = movs.find(x => x.id === id);
   if (!m) return;
   const isTransfer = m.type === 'transfer';
+
   confirmDialog({
     title: isTransfer ? '¿Revertir esta transferencia?' : '¿Eliminar este movimiento?',
-    text: isTransfer ? `Se devolverá ${fMoney(m.amt)} a ${ACCOUNTS[m.from].label} y se restará de ${ACCOUNTS[m.to].label}.`
-                     : 'Se revertirá el cambio en la cuenta correspondiente.',
+    text: isTransfer 
+      ? 'Se devolverá el dinero a la cuenta origen.'
+      : 'Se revertirá el cambio en la caja.',
     confirmLabel: 'Sí, revertir',
     onConfirm: async () => {
-      pushUndo(isTransfer ? 'Revertir transferencia' : 'Revertir ' + (m.type === 'gasto' ? 'gasto' : 'ingreso') + ' · ' + m.desc);
-      if (isTransfer){ wallet[m.from] += m.amt; wallet[m.to] -= m.amtIn; }
-      else if (m.type === 'gasto'){ wallet[m.acc] += m.amt; }
-      else { wallet[m.acc] -= m.amt; }
+      pushUndo('Revertir movimiento');
+
+      if (isTransfer) {
+        wallet[m.from] += m.amt;
+        wallet[m.to] -= m.amtIn;
+      } else if (m.type === 'gasto') {
+        if (m.acc === 'cop') wallet.cop += m.amt * (wallet.rate || 1);
+        else wallet[m.acc] += m.amt;
+      } else {
+        if (m.acc === 'cop') wallet.cop -= m.amt * (wallet.rate || 1);
+        else wallet[m.acc] -= m.amt;
+      }
+
+      // === PARTE B: RESTAURAR STOCK SI FUE UN AJUSTE DE INVENTARIO ===
+      if (m.itemId && m.itemType && m.qtyChange) {
+        const item = m.itemType === 'phone' 
+          ? phones.find(x => x.id === m.itemId) 
+          : acc.find(x => x.id === m.itemId);
+        if (item) {
+          // Revierte el cambio de cantidad (si sumaste 1, restará 1)
+          item.qty = Math.max(0, parseNum(item.qty) - m.qtyChange);
+        }
+      }
+
+      // Vuelve a poner el envío como 'pendiente' para devolver el botón en el producto
+      if (m.cat === 'Envío' && m.itemId && m.itemType) {
+        const item = m.itemType === 'phone' 
+          ? phones.find(x => x.id === m.itemId) 
+          : acc.find(x => x.id === m.itemId);
+        if (item) {
+          item.shipStatus = 'pendiente';
+        }
+      }
+
       movs = movs.filter(x => x.id !== id);
-      await saveAll(); showToast('Movimiento revertido', true);
+      await saveAll();
+      
+      if (typeof renderAll === 'function') renderAll();
+      else {
+        if (typeof renderPhones === 'function') renderPhones();
+        if (typeof renderAcc === 'function') renderAcc();
+        if (typeof renderWallet === 'function') renderWallet();
+      }
+      showToast('Movimiento revertido', true);
     }
   });
 };
-
 window.resendReceipt = id => {
   const h = hist.find(x => x.id === id);
   if (!h) return;
