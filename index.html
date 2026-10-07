@@ -1755,15 +1755,17 @@ window.modStock = async (id, delta) => {
   }
     // Registrar ajuste de stock en el historial de caja
     if (costoUnidad > 0 && typeof movs !== 'undefined') {
-      movs.push({
-        id: typeof uid === 'function' ? uid() : Date.now().toString(),
-        type: delta > 0 ? 'egress' : 'ingress',
-        cat: 'Ajuste Stock',
-        desc: 'Ajuste stock ' + (delta > 0 ? '+' : '') + delta + ': ' + a.name,
-        amount: costoUnidad,
-        currency: moneda,
-        date: new Date().toISOString()
-      });
+    movs.push({
+  id: typeof uid === 'function' ? uid() : Date.now().toString(),
+  type: delta > 0 ? 'gasto' : 'ingreso',
+  cat: 'Ajuste Stock',
+  desc: 'Ajuste stock ' + (delta > 0 ? '+' : '') + delta + ': ' + a.name,
+  amt: costoUnidad,
+  amount: costoUnidad,
+  acc: moneda,
+  currency: moneda,
+  date: new Date().toISOString()
+});
     }
   a.qty += delta;
   await saveAll();
@@ -1776,6 +1778,10 @@ window.payShip = (type, id) => {
 
   const name = item.model || item.name;
   const shipCost = parseNum(item.ship);
+  if (shipCost <= 0) {
+  showToast('El costo de envío es $0. Edita el producto para asignarle un valor.', false);
+  return;
+}
   const moneda = item.payCurrency || 'usd';
 
   confirmDialog({
@@ -1797,16 +1803,21 @@ window.payShip = (type, id) => {
             // Registrar egreso por pago de envío
       if (typeof movs !== 'undefined') {
         movs.push({
-          id: typeof uid === 'function' ? uid() : Date.now().toString(),
-          type: 'egress',
-          cat: 'Envío',
-          desc: 'Pago envío pendiente: ' + name,
-          amount: shipCost,
-          currency: moneda,
-          date: new Date().toISOString()
-        });
+  id: typeof uid === 'function' ? uid() : Date.now().toString(),
+  type: 'gasto',
+  cat: 'Envío',
+  desc: 'Pago envío pendiente: ' + name,
+  amt: shipCost,
+  amount: shipCost,
+  acc: moneda,
+  currency: moneda,
+  date: new Date().toISOString()
+});
       }
       await saveAll();
+      if (typeof renderPhones === 'function') renderPhones();
+if (typeof renderAcc === 'function') renderAcc();
+if (typeof renderWallet === 'function') renderWallet();
       showToast('Envío de ' + name + ' pagado y descontado de caja', true);
     }
   });
@@ -1850,14 +1861,16 @@ window.confirmDelete = (type, id) => {
       // Registrar reintegro a la caja por eliminación
       if (totalDevolver > 0 && typeof movs !== 'undefined') {
         movs.push({
-          id: typeof uid === 'function' ? uid() : Date.now().toString(),
-          type: 'ingress',
-          cat: 'Reintegro',
-          desc: 'Reintegro por eliminación: ' + name,
-          amount: totalDevolver,
-          currency: moneda,
-          date: new Date().toISOString()
-        });
+  id: typeof uid === 'function' ? uid() : Date.now().toString(),
+  type: 'ingreso',
+  cat: 'Reintegro',
+  desc: 'Reintegro por eliminación: ' + name,
+  amt: totalDevolver,
+  amount: totalDevolver,
+  acc: moneda,
+  currency: moneda,
+  date: new Date().toISOString()
+});
       }
       
       await saveAll();
