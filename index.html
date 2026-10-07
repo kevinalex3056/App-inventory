@@ -1213,10 +1213,10 @@ window.editPhone = id => {
     <form id="fPhone" class="form-grid">
       <div class="field full"><label>Modelo y capacidad</label><input class="input" name="model" required value="${esc(p.model)}"></div>
       <div class="field full"><label>IMEI / Serial</label><input class="input" name="imei" required value="${esc(p.imei)}"></div>
-      <div class="field"><label>Batería %</label><input class="input" name="bat" type="number" min="0" max="100" required value="${esc(p.bat)}"></div>
+      <div class="field"><label>Batería %</label><input class="input" name="bat" type="text" inputmode="numeric" required value="${esc(p.bat)}"></div>
       <div class="field"><label>Notas</label><input class="input" name="notes" value="${esc(p.notes || '')}"></div>
-      <div class="field"><label>Costo equipo (USD)</label><input class="input" name="cost" type="number" step="0.01" required value="${esc(p.cost)}"></div>
-      <div class="field"><label>Costo envío (USD)</label><input class="input" name="ship" type="number" step="0.01" value="${esc(p.ship || 0)}"></div>
+      <div class="field"><label>Costo equipo (USD)</label><input class="input" name="cost" type="text" inputmode="decimal" required value="${esc(p.cost)}"></div>
+      <div class="field"><label>Costo envío (USD)</label><input class="input" name="ship" type="text" inputmode="decimal" value="${esc(p.ship || 0)}"></div>
       <div class="field">
   <label>Estado del Envío</label>
   <select class="input" name="shipStatus">
@@ -1239,7 +1239,7 @@ window.editPhone = id => {
           <option value="cop" ${p.payCurrency === 'cop' ? 'selected' : ''}>COP (Pesos)</option>
         </select>
       </div>
-      <div class="field full"><label>Precio venta (USD)</label><input class="input" name="price" type="number" step="0.01" required value="${esc(p.price)}"></div>
+      <div class="field full"><label>Precio venta (USD)</label><input class="input" name="price" type="text" inputmode="decimal" required value="${esc(p.price)}"></div>
       <div class="modal-foot full"><button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button><button type="submit" class="btn primary">Guardar cambios</button></div>
     </form>`);
 
@@ -1297,10 +1297,10 @@ window.newPhone = () => {
     <form id="fPhone" class="form-grid">
       <div class="field full"><label>Modelo y capacidad</label><input class="input" name="model" required placeholder="iPhone 13 128GB" autofocus></div>
       <div class="field full"><label>IMEI / Serial</label><input class="input" name="imei" required></div>
-      <div class="field"><label>Batería %</label><input class="input" name="bat" type="number" min="0" max="100" required placeholder="100"></div>
+      <div class="field"><label>Batería %</label><input class="input" name="bat" type="text" inputmode="numeric" required placeholder="100"></div>
       <div class="field"><label>Notas</label><input class="input" name="notes" placeholder="Opcional"></div>
-      <div class="field"><label>Costo equipo (USD)</label><input class="input" name="cost" type="number" step="0.01" required placeholder="0.00"></div>
-      <div class="field"><label>Costo envío (USD)</label><input class="input" name="ship" type="number" step="0.01" value="0.00" placeholder="0.00"></div>
+      <div class="field"><label>Costo equipo (USD)</label><input class="input" name="cost" type="text" inputmode="decimal" required placeholder="0.00"></div>
+      <div class="field"><label>Costo envío (USD)</label><input class="input" name="ship" type="text" inputmode="decimal" value="0.00" placeholder="0.00"></div>
       <div class="field">
   <label>Estado del Envío</label>
   <select class="input" name="shipStatus">
@@ -1323,7 +1323,7 @@ window.newPhone = () => {
           <option value="cop">COP (Pesos)</option>
         </select>
       </div>
-      <div class="field full"><label>Precio venta (USD)</label><input class="input" name="price" type="number" step="0.01" required placeholder="0.00"></div>
+      <div class="field full"><label>Precio venta (USD)</label><input class="input" name="price" type="text" inputmode="decimal" required placeholder="0.00"></div>
       <div class="modal-foot full"><button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button><button type="submit" class="btn primary">Guardar equipo</button></div>
     </form>`);
 
@@ -1377,9 +1377,9 @@ window.editAcc = id => {
   openModal(`${modalHeader('Editar accesorio')}
     <form id="fAcc" class="form-grid">
       <div class="field full"><label>Nombre</label><input class="input" name="name" required value="${esc(a.name)}"></div>
-      <div class="field full"><label>Cantidad en stock</label><input class="input" name="qty" type="number" min="0" required value="${esc(a.qty)}"></div>
-      <div class="field"><label>Costo unitario (USD)</label><input class="input" name="cost" type="number" step="0.01" required value="${esc(a.cost)}"></div>
-      <div class="field"><label>Costo envío total (USD)</label><input class="input" name="ship" type="number" step="0.01" value="${esc(a.ship || 0)}"></div>
+     <div class="field full"><label>Cantidad en stock</label><input class="input" name="qty" type="text" inputmode="numeric" required value="${esc(a.qty)}"></div>
+      <div class="field"><label>Costo unitario (USD)</label><input class="input" name="cost" type="text" inputmode="decimal" required value="${esc(a.cost)}"></div>
+     <div class="field"><label>Costo envío total (USD)</label><input class="input" name="ship" type="text" inputmode="decimal" value="${esc(a.ship || 0)}"></div>
       <div class="field">
   <label>Estado del Envío</label>
   <select class="input" name="shipStatus">
@@ -1402,7 +1402,7 @@ window.editAcc = id => {
           <option value="cop" ${a.payCurrency === 'cop' ? 'selected' : ''}>COP (Pesos)</option>
         </select>
       </div>
-      <div class="field full"><label>Precio venta unitario (USD)</label><input class="input" name="price" type="number" step="0.01" required value="${esc(a.price)}"></div>
+      <div class="field full"><label>Precio venta unitario (USD)</label><input class="input" name="price" type="text" inputmode="decimal" required value="${esc(a.price)}"></div>
       <div class="modal-foot full"><button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button><button type="submit" class="btn primary">Guardar cambios</button></div>
     </form>`);
 
@@ -1459,9 +1459,9 @@ window.newAcc = () => {
   openModal(`${modalHeader('Nuevo accesorio')}
     <form id="fAcc" class="form-grid">
       <div class="field full"><label>Nombre</label><input class="input" name="name" required placeholder="Funda iPhone 13" autofocus></div>
-      <div class="field full"><label>Cantidad en stock</label><input class="input" name="qty" type="number" min="1" required placeholder="10"></div>
-      <div class="field"><label>Costo unitario (USD)</label><input class="input" name="cost" type="number" step="0.01" required placeholder="0.00"></div>
-      <div class="field"><label>Costo envío total (USD)</label><input class="input" name="ship" type="number" step="0.01" value="0.00"></div>
+      <div class="field full"><label>Cantidad en stock</label><input class="input" name="qty" type="text" inputmode="numeric" required placeholder="10"></div>
+      <div class="field"><label>Costo unitario (USD)</label><input class="input" name="cost" type="text" inputmode="decimal" required placeholder="0.00"></div>
+      <div class="field"><label>Costo envío total (USD)</label><input class="input" name="ship" type="text" inputmode="decimal" value="0.00"></div>
       <div class="field">
   <label>Estado del Envío</label>
   <select class="input" name="shipStatus">
@@ -1484,7 +1484,7 @@ window.newAcc = () => {
           <option value="cop">COP (Pesos)</option>
         </select>
       </div>
-      <div class="field full"><label>Precio venta unitario (USD)</label><input class="input" name="price" type="number" step="0.01" required placeholder="0.00"></div>
+      <div class="field full"><label>Precio venta unitario (USD)</label><input class="input" name="price" type="text" inputmode="decimal" required placeholder="0.00"></div>
       <div class="modal-foot full"><button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button><button type="submit" class="btn primary">Guardar accesorio</button></div>
     </form>`);
 
@@ -1551,7 +1551,7 @@ window.prepSell = (type, id) => {
           Puedes escribirlo como 0412-1234567, 4121234567 o +58412…
         </small>
       </div>
-      <div class="field"><label>Precio final (USD)</label><input class="input" name="price" type="number" step="0.01" required value="${esc(item.price)}"></div>
+      <div class="field"><label>Precio final (USD)</label><input class="input" name="price" type="text" inputmode="decimal" required value="${esc(item.price)}"></div>
       <div class="field"><label>Método de pago</label>
         <select class="input" name="account">
           <option value="usd">Efectivo USD</option>
@@ -1620,13 +1620,13 @@ window.newWalletMove = () => {
       <div class="field"><label>Cuenta</label>
         <select class="input" name="account"><option value="usd">Efectivo USD</option><option value="cop">Efectivo COP</option><option value="usdt">USDT</option><option value="zinli">Zinli</option></select>
       </div>
-      <div class="field"><label>Monto</label><input class="input" name="amount" type="number" step="0.01" required placeholder="0.00"></div>
+      <div class="field"><label>Monto</label><input class="input" name="amount" type="text" inputmode="decimal" required placeholder="0.00"></div>
       <div class="modal-foot full"><button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button><button type="submit" class="btn primary">Registrar</button></div>
     </form>`);
   $('#fWallet').onsubmit = async e => {
     e.preventDefault();
     const fd = new FormData(e.target);
-    const type = fd.get('type'), desc = fd.get('desc'), account = fd.get('account'), amount = +fd.get('amount');
+    const type = fd.get('type'), desc = fd.get('desc'), account = fd.get('account'), amount = parseNum(fd.get('amount'));
     pushUndo((type === 'sub' ? 'Gasto · ' : 'Ingreso · ') + desc);
     if (type === 'sub') wallet[account] -= amount;
     else                wallet[account] += amount;
