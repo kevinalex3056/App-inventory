@@ -1341,47 +1341,65 @@ window.newPhone = () => {
       <div class="modal-foot full"><button type="button" class="btn ghost" onclick="closeModals()">Cancelar</button><button type="submit" class="btn primary">Guardar equipo</button></div>
     </form>`);
 
-  $('#fPhone').onsubmit = async e => {
-    e.preventDefault();
-    const fd = new FormData(e.target);
-    const cost = parseNum(fd.get('cost'));
-const ship = parseNum(fd.get('ship'));
-const shipStatus = fd.get('shipStatus') || 'pagado';
-// Si el envío está pendiente, no sale ese dinero de la caja
-const totalGasto = cost + (shipStatus === 'pagado' ? ship : 0);
-    const moneda = fd.get('payCurrency');
+ $('#fPhone').onsubmit = async e => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const cost = parseNum(fd.get('cost'));
+  const ship = parseNum(fd.get('ship'));
+  const shipStatus = fd.get('shipStatus') || 'pagado';
+  // Si el envío está pendiente, no sale ese dinero de la caja
+  const totalGasto = cost + (shipStatus === 'pagado' ? ship : 0);
+  const moneda = fd.get('payCurrency');
 
-    pushUndo('Agregar equipo ' + fd.get('model'));
+  pushUndo('Agregar equipo ' + fd.get('model'));
 
-    if (typeof wallet !== 'undefined' && wallet && wallet[moneda] !== undefined) {
-      if (moneda === 'cop') {
-        const tasa = wallet.rate || 1;
-        wallet.cop -= (totalGasto * tasa);
-      } else {
-        wallet[moneda] -= totalGasto;
-      }
+  if (typeof wallet !== 'undefined' && wallet && wallet[moneda] !== undefined) {
+    if (moneda === 'cop') {
+      const tasa = wallet.rate || 1;
+      wallet.cop -= (totalGasto * tasa);
+    } else {
+      wallet[moneda] -= totalGasto;
     }
+  }
 
-    const item = {
-      id: uid(),
-      model: fd.get('model'),
-      imei: fd.get('imei'),
-      bat: fd.get('bat'),
-      notes: fd.get('notes'),
-      cost: cost,
-      ship: ship,
-      shipStatus: shipStatus,
-      payMethod: fd.get('payMethod'),
-      payCurrency: moneda,
-      price: parseNum(fd.get('price')),
-      date: new Date().toISOString()
-    };
-
-    phones.push(item);
-    closeModal();
-    await saveAll();
-    showToast('Equipo registrado y dinero descontado de caja', true);
+  const item = {
+    id: typeof uid === 'function' ? uid() : Date.now().toString(),
+    model: fd.get('model'),
+    imei: fd.get('imei'),
+    bat: fd.get('bat'),
+    notes: fd.get('notes'),
+    cost: cost,
+    ship: ship,
+    shipStatus: shipStatus,
+    payMethod: fd.get('payMethod'),
+    payCurrency: moneda,
+    price: parseNum(fd.get('price')),
+    date: new Date().toISOString()
   };
+
+  // REGISTRAR COMPRA EN MOVIMIENTOS RECIENTES (CAJA)
+  if (typeof movs !== 'undefined') {
+    movs.push({
+      id: typeof uid === 'function' ? uid() : Date.now().toString(),
+      type: 'gasto',
+      cat: 'Compra Equipo',
+      desc: 'Compra equipo: ' + item.model,
+      amt: totalGasto > 0 ? totalGasto : cost,
+      amount: totalGasto > 0 ? totalGasto : cost,
+      acc: moneda,
+      currency: moneda,
+      itemId: item.id,
+      itemType: 'phone',
+      isNewProduct: true,
+      date: new Date().toISOString()
+    });
+  }
+
+  phones.push(item);
+  closeModal();
+  await saveAll();
+  showToast('Equipo registrado y dinero descontado de caja', true);
+};
 };
 
 window.editAcc = id => {
@@ -1503,46 +1521,65 @@ window.newAcc = () => {
     </form>`);
 
   $('#fAcc').onsubmit = async e => {
-    e.preventDefault();
-    const fd = new FormData(e.target);
-    const qty = parseNum(fd.get('qty'));
-const cost = parseNum(fd.get('cost'));
-const ship = parseNum(fd.get('ship'));
-const shipStatus = fd.get('shipStatus') || 'pagado';
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const qty = parseNum(fd.get('qty'));
+  const cost = parseNum(fd.get('cost'));
+  const ship = parseNum(fd.get('ship'));
+  const shipStatus = fd.get('shipStatus') || 'pagado';
 
-// Si el envío está pendiente, no sale ese dinero de la caja
-const envioPagado = shipStatus === 'pendiente' ? 0 : ship;
-const totalGasto = (cost * qty) + envioPagado;
-    const moneda = fd.get('payCurrency');
+  // Si el envío está pendiente, no sale ese dinero de la caja
+  const envioPagado = shipStatus === 'pendiente' ? 0 : ship;
+  const totalGasto = (cost * qty) + envioPagado;
+  const moneda = fd.get('payCurrency');
 
-    pushUndo('Agregar accesorio ' + fd.get('name'));
+  pushUndo('Agregar accesorio ' + fd.get('name'));
 
-    if (typeof wallet !== 'undefined' && wallet && wallet[moneda] !== undefined) {
-      if (moneda === 'cop') {
-        const tasa = wallet.rate || 1;
-        wallet.cop -= (totalGasto * tasa);
-      } else {
-        wallet[moneda] -= totalGasto;
-      }
+  if (typeof wallet !== 'undefined' && wallet && wallet[moneda] !== undefined) {
+    if (moneda === 'cop') {
+      const tasa = wallet.rate || 1;
+      wallet.cop -= (totalGasto * tasa);
+    } else {
+      wallet[moneda] -= totalGasto;
     }
+  }
 
-    const item = {
-      id: uid(),
-      name: fd.get('name'),
-      qty: qty,
-      cost: cost,
-      ship: ship,
-      shipStatus: shipStatus,
-      payMethod: fd.get('payMethod'),
-      payCurrency: moneda,
-      price: parseNum(fd.get('price')),
-      date: new Date().toISOString()
-    };
-    acc.push(item);
-    closeModal();
-    await saveAll();
-    showToast('Accesorio registrado y dinero descontado', true);
+  const item = {
+    id: typeof uid === 'function' ? uid() : Date.now().toString(),
+    name: fd.get('name'),
+    qty: qty,
+    cost: cost,
+    ship: ship,
+    shipStatus: shipStatus,
+    payMethod: fd.get('payMethod'),
+    payCurrency: moneda,
+    price: parseNum(fd.get('price')),
+    date: new Date().toISOString()
   };
+
+  // REGISTRAR COMPRA EN MOVIMIENTOS RECIENTES (CAJA)
+  if (typeof movs !== 'undefined') {
+    movs.push({
+      id: typeof uid === 'function' ? uid() : Date.now().toString(),
+      type: 'gasto',
+      cat: 'Compra Accesorio',
+      desc: 'Compra accesorio: ' + item.name + ' (x' + item.qty + ')',
+      amt: totalGasto > 0 ? totalGasto : (cost * qty),
+      amount: totalGasto > 0 ? totalGasto : (cost * qty),
+      acc: moneda,
+      currency: moneda,
+      itemId: item.id,
+      itemType: 'acc',
+      isNewProduct: true,
+      date: new Date().toISOString()
+    });
+  }
+
+  acc.push(item);
+  closeModal();
+  await saveAll();
+  showToast('Accesorio registrado y dinero descontado', true);
+};
 };
 
 window.prepSell = (type, id) => {
@@ -1937,7 +1974,7 @@ window.undoMove = id => {
     title: isTransfer ? '¿Revertir esta transferencia?' : '¿Eliminar este movimiento?',
     text: isTransfer 
       ? 'Se devolverá el dinero a la cuenta origen.'
-      : 'Se revertirá el cambio en la caja y el stock del inventario.',
+      : 'Se revertirá el cambio en la caja y se ajustará el inventario.',
     confirmLabel: 'Sí, revertir',
     onConfirm: async () => {
       pushUndo('Revertir movimiento');
@@ -1954,31 +1991,34 @@ window.undoMove = id => {
         else wallet[m.acc] -= m.amt;
       }
 
-      // 2. BUSCAR PRODUCTO (por ID o por Nombre en la descripción)
-      let item = null;
-      if (m.itemId) {
-        item = (m.itemType === 'phone' ? phones : acc).find(x => String(x.id) === String(m.itemId));
-      }
-      // Búsqueda de respaldo por Nombre (para movimientos registrados previamente)
-      if (!item && m.desc) {
-        item = acc.find(x => m.desc.includes(x.name)) || phones.find(x => m.desc.includes(x.model));
-      }
-
-      // 3. RESTAURAR EL STOCK
-      if (item) {
-        const cant = m.qtyChange || 1;
-        if (m.type === 'gasto') {
-          // Si fue un gasto (+stock), al revertir RESTA stock
-          item.qty = Math.max(0, parseNum(item.qty) - cant);
-        } else if (m.type === 'ingreso' && m.cat === 'Ajuste Stock') {
-          // Si fue un ingreso (-stock), al revertir SUMA stock
-          item.qty = parseNum(item.qty) + cant;
+      // 2. SI FUE CREACIÓN/COMPRA DE UN PRODUCTO NUEVO -> ELIMINAR DEL INVENTARIO
+      if (m.isNewProduct || m.cat === 'Compra Equipo' || m.cat === 'Compra Accesorio') {
+        if (m.itemType === 'phone' || m.cat === 'Compra Equipo') {
+          phones = phones.filter(p => String(p.id) !== String(m.itemId) && !m.desc.includes(p.model));
+        } else {
+          acc = acc.filter(a => String(a.id) !== String(m.itemId) && !m.desc.includes(a.name));
+        }
+      } 
+      // 3. SI FUE UN AJUSTE DE STOCK -> RESTAURAR CANTIDAD
+      else if (m.itemId || m.desc) {
+        let item = (m.itemType === 'phone' ? phones : acc).find(x => String(x.id) === String(m.itemId));
+        if (!item && m.desc) {
+          item = acc.find(x => m.desc.includes(x.name)) || phones.find(x => m.desc.includes(x.model));
+        }
+        if (item) {
+          const cant = m.qtyChange || 1;
+          if (m.type === 'gasto') {
+            item.qty = Math.max(0, parseNum(item.qty) - cant);
+          } else if (m.type === 'ingreso' && m.cat === 'Ajuste Stock') {
+            item.qty = parseNum(item.qty) + cant;
+          }
         }
       }
 
-      // 4. RESTAURAR ESTADO DE ENVÍO
-      if (m.cat === 'Envío' && item) {
-        item.shipStatus = 'pendiente';
+      // 4. RESTAURAR ESTADO DE ENVÍO SI APLICA
+      if (m.cat === 'Envío' && m.itemId) {
+        const item = phones.find(x => String(x.id) === String(m.itemId)) || acc.find(x => String(x.id) === String(m.itemId));
+        if (item) item.shipStatus = 'pendiente';
       }
 
       // 5. Eliminar movimiento y guardar
@@ -1992,7 +2032,7 @@ window.undoMove = id => {
         if (typeof renderWallet === 'function') renderWallet();
       }
 
-      showToast('Movimiento revertido y stock actualizado', true);
+      showToast('Movimiento revertido e inventario actualizado', true);
     }
   });
 };
