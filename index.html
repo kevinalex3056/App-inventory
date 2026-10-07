@@ -1937,11 +1937,12 @@ window.undoMove = id => {
     title: isTransfer ? '¿Revertir esta transferencia?' : '¿Eliminar este movimiento?',
     text: isTransfer 
       ? 'Se devolverá el dinero a la cuenta origen.'
-      : 'Se revertirá el cambio en la caja.',
+      : 'Se revertirá el cambio en la caja y el stock del inventario.',
     confirmLabel: 'Sí, revertir',
     onConfirm: async () => {
       pushUndo('Revertir movimiento');
 
+      // 1. Revertir dinero en la caja
       if (isTransfer) {
         wallet[m.from] += m.amt;
         wallet[m.to] -= m.amtIn;
@@ -1953,37 +1954,45 @@ window.undoMove = id => {
         else wallet[m.acc] -= m.amt;
       }
 
-      // === PARTE B: RESTAURAR STOCK SI FUE UN AJUSTE DE INVENTARIO ===
-      if (m.itemId && m.itemType && m.qtyChange) {
-        const item = m.itemType === 'phone' 
-          ? phones.find(x => x.id === m.itemId) 
-          : acc.find(x => x.id === m.itemId);
-        if (item) {
-          // Revierte el cambio de cantidad (si sumaste 1, restará 1)
-          item.qty = Math.max(0, parseNum(item.qty) - m.qtyChange);
+      // 2. BUSCAR PRODUCTO (por ID o por Nombre en la descripción)
+      let item = null;
+      if (m.itemId) {
+        item = (m.itemType === 'phone' ? phones : acc).find(x => String(x.id) === String(m.itemId));
+      }
+      // Búsqueda de respaldo por Nombre (para movimientos registrados previamente)
+      if (!item && m.desc) {
+        item = acc.find(x => m.desc.includes(x.name)) || phones.find(x => m.desc.includes(x.model));
+      }
+
+      // 3. RESTAURAR EL STOCK
+      if (item) {
+        const cant = m.qtyChange || 1;
+        if (m.type === 'gasto') {
+          // Si fue un gasto (+stock), al revertir RESTA stock
+          item.qty = Math.max(0, parseNum(item.qty) - cant);
+        } else if (m.type === 'ingreso' && m.cat === 'Ajuste Stock') {
+          // Si fue un ingreso (-stock), al revertir SUMA stock
+          item.qty = parseNum(item.qty) + cant;
         }
       }
 
-      // Vuelve a poner el envío como 'pendiente' para devolver el botón en el producto
-      if (m.cat === 'Envío' && m.itemId && m.itemType) {
-        const item = m.itemType === 'phone' 
-          ? phones.find(x => x.id === m.itemId) 
-          : acc.find(x => x.id === m.itemId);
-        if (item) {
-          item.shipStatus = 'pendiente';
-        }
+      // 4. RESTAURAR ESTADO DE ENVÍO
+      if (m.cat === 'Envío' && item) {
+        item.shipStatus = 'pendiente';
       }
 
+      // 5. Eliminar movimiento y guardar
       movs = movs.filter(x => x.id !== id);
       await saveAll();
-      
+
       if (typeof renderAll === 'function') renderAll();
       else {
         if (typeof renderPhones === 'function') renderPhones();
         if (typeof renderAcc === 'function') renderAcc();
         if (typeof renderWallet === 'function') renderWallet();
       }
-      showToast('Movimiento revertido', true);
+
+      showToast('Movimiento revertido y stock actualizado', true);
     }
   });
 };
